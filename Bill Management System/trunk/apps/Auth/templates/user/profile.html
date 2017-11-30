@@ -1,0 +1,120 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| Profile
+{% endblock %}
+
+{% block additional_style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cropper.min.css' %}">
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Auth:user_profile" %}">My Profile</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="col-xs-12 col-sm-4 text-center">
+            <ul class="list-group">
+                <li class="list-group-item text-left">
+                    <span class="entypo-user"></span>&nbsp;&nbsp;Profile</li>
+                <li class="list-group-item text-center">
+                    <img src="{{ user.get_profile_image }}" alt="profile picture" class="img-circle img-responsive img-profile" width="130px" height="130px">
+                    <h7>Upload a different photo...</h7>
+                    <form enctype="multipart/form-data" method="post" action="" id="imageUploadFrm">
+                        {% csrf_token %}
+                        <label class="btn btn-default btn-file">
+                            Browse {{ profile_image_form }}
+                        </label>
+                    </form>
+                </li>
+                <li class="list-group-item text-right">
+                    <span class="pull-left">
+                        <strong>Joined</strong>
+                    </span>{{ user.created_at | date:"d M Y" }}</li>
+                <li class="list-group-item text-right">
+                    <span class="pull-left">
+                        <strong>Last seen</strong>
+                    </span>{{ user.last_login | timesince }} ago</li>
+                <li class="list-group-item text-right">
+                    <span class="pull-left">
+                        <strong>Username</strong>
+                    </span>{{ user.username }}</li>
+
+            </ul>
+
+        </div>
+        <div class="col-xs-12 col-sm-8 profile-name">
+            <h2>{{ user.fullname }}</h2>
+            <hr>
+
+            <dl class="dl-horizontal-profile">
+                <dt>Username</dt>
+                <dd>{{ user.username }}</dd>
+
+                <dt>Name</dt>
+                <dd>{{ user.fullname }}</dd>
+
+                <dt>Email</dt>
+                <dd>{{ user.email }}</dd>
+
+                <dt>Last Update</dt>
+                <dd>{{ user.updated_at }}</dd>
+
+                <dt>Role</dt>
+                <dd></dd>
+            </dl>
+            
+        </div>
+
+    </div>
+</div>
+
+
+<!-- MODAL TO CROP THE IMAGE -->
+<div class="modal fade" id="modalCrop">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title">Crop the photo</h4>
+    </div>
+    <div class="modal-body">
+      <img src="" id="image" style="max-width: 100%;">
+    </div>
+    <div class="modal-footer">
+      <div class="btn-group pull-left" role="group">
+        <button type="button" class="btn btn-default js-zoom-in">
+          <span class="glyphicon glyphicon-zoom-in"></span>
+        </button>
+        <button type="button" class="btn btn-default js-zoom-out">
+          <span class="glyphicon glyphicon-zoom-out"></span>
+        </button>
+      </div>
+      <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+      <button type="button" class="btn btn-primary js-crop-and-upload">Crop and upload</button>
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/cropper.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/profile_image_upload.js"></script>
+{% endblock additional_script %}

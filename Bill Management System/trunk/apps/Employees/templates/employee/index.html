@@ -1,0 +1,147 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| {{ title }} List
+{% endblock %}
+
+{% block additional_style %}
+    <link rel="stylesheet" href="{% static '' %}js/dataTable/css/jquery.dataTables.min.css" />
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Employees:employee_index" %}">{{ title }} List</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }} List
+{% endblock %}
+
+{% block button_container %}
+    <a href="{% url "Employees:employee_save" %}" class="btn btn-primary pull-right">Add {{ title }}</a>
+{% endblock button_container %}
+
+{% block content %}
+    <table class="table table-bordered" id="data-table-example" style="width: 100%;">
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>
+                    Name
+                </th>
+                <th>Employee ID</th>
+                <th>
+                    Designation
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Status
+                </th>
+                <th></th>
+            </tr>
+        </tfoot>
+        <thead>
+            <tr>
+                <th class="align-center">SL</th>
+                <th width="30%">Name</th>
+                <th width="12%">Employee ID</th>
+                <th width="18%">
+                    Designation
+                </th>
+                <th width="20%">
+                    Email
+                </th>
+                <th width="10%">
+                    Status
+                </th>
+                <th width="10%">Action</th>
+            </tr>
+        </thead>
+    </table>
+    
+{% endblock content %}
+    
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/dataTables.material.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            search_columns = [1,2,3,4];
+            select_columns = [5];
+            var table = $('#data-table-example').DataTable({
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{% url "Employees:employee_index" %}",
+                    type: 'POST'  
+                },
+
+                "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+                "dom": '<"top"l>rt<"bottom"<"pull-left"i><"pull-right"p>>',
+                "searching": true,
+                "columnDefs": [
+                    {
+                        "targets": [0,6],
+                        "sortable": false,
+                    }],
+                initComplete: function (){
+                    initSelectBox(this, select_columns);    
+                }
+            });
+            initSearchBox(table, search_columns);
+
+        });
+
+        function initSearchBox(table, search_columns){
+            var tfoot_ths = $('table tfoot th');
+            search_columns.forEach(function(i){
+                var tfoot_th = tfoot_ths[i];
+                var title = $.trim($(tfoot_th).text());
+                $(tfoot_th).html( '<input type="text" class="filter"/>' );
+            });
+
+            table.columns(search_columns).every( function () {
+                var that = this;
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                });
+            });
+        }
+
+        function initSelectBox(table, select_columns){
+            table.api().columns(select_columns).every( function () {
+                var column = this;
+                var select = $('<select><option value="">-----All-----</option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? val : '', true, false )
+                            .draw();
+                    } );
+                
+                select.append('<option value='+1+'>Active</option>');
+                select.append('<option value='+0+'>Not Active</option>');
+            });
+        }
+
+        function confirmDelete(){
+            return confirm("Are you sure to delete this employee?");
+        }
+
+  </script>
+    
+{% endblock additional_script %}

@@ -1,0 +1,32 @@
+    {% load static %}
+    <script type="text/javascript" src="{% static '' %}js/preloader.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/bootstrap.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/app.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/load.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/main.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/select2.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/moment.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/bootstrap-datetimepicker.min.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.select2').select2({ width: '100%' });
+            $( ".datetime-input" ).datetimepicker({
+                /*format:'YYYY-MM-DD'*/
+                format:'YYYY-MM-DD',
+            });
+        });
+        
+
+    </script>
+    <!-- /MAIN EFFECT -->
+    <!-- GAGE -->
+    <!-- <script type="text/javascript" src="{% static '' %}js/toggle_close.js"></script>
+
+    
+    <script src="{% static '' %}js/footable/js/footable.js?v=2-0-1" type="text/javascript"></script> -->
+    <!-- <script src="{% static '' %}js/footable/js/footable.sort.js?v=2-0-1" type="text/javascript"></script>
+    <script src="{% static '' %}js/footable/js/footable.filter.js?v=2-0-1" type="text/javascript"></script>
+    <script src="{% static '' %}js/footable/js/footable.paginate.js?v=2-0-1" type="text/javascript"></script>
+    <script src="{% static '' %}js/footable/js/footable.paginate.js?v=2-0-1" type="text/javascript"></script> -->

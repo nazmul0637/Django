@@ -1,0 +1,156 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| {{ title }} List
+{% endblock %}
+
+{% block additional_style %}
+    <link rel="stylesheet" href="{% static '' %}js/dataTable/css/jquery.dataTables.min.css" />
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Settings:holiday_index" %}">{{ title }} List</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }} List
+{% endblock %}
+
+{% block button_container %}
+    <a href="{% url "Settings:holiday_save" %}" class="btn btn-primary pull-right">Add {{ title }}</a>
+{% endblock button_container %}
+
+{% block content %}
+    <table class="table table-bordered" id="data-table-example">
+        <tfoot>
+            <tr>
+                <th>
+                    Branch ID
+                </th>
+                <th>Holiday Date</th>
+                <th>
+                    Holiday Type
+                </th>
+                <th></th>
+            </tr>
+        </tfoot>
+        <thead class="thead-inverse">
+            <tr>
+                <th class="align-center">
+                    Branch ID
+                </th>
+                <th>Holiday Date</th>
+                <th>
+                    Holiday Type
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for holiday in holidays %}
+            <tr>
+                <td>{{ holiday.branch_id }}</td>
+                <td>{{ holiday.holiday_date }}</td>
+                <td>{{ holiday.holiday_type }}</td>
+                <!-- <td><span class="label label-{% if invoice_template.status %}success {% else %} default{% endif %}">{{ invoice_template.get_status }}</span></td> -->
+                <td nowrap="nowrap">
+                    <a href="" onclick="showDetail({{ holiday.id }}); return false;"><span class="glyphicon glyphicon-search text-success"></span></a>| 
+                    <a href="{% url "Settings:holiday_save" holiday.get_encoded_id %}"><span class="glyphicon glyphicon-edit text-info"></span></a>| <a href="{% url "Settings:holiday_delete" holiday.get_encoded_id %}" onclick="return confirm('Are you sure to delete this Holiday Details?')"><span class="glyphicon glyphicon-remove text-warning"></span></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="modal fade" tabindex="-1" role="dialog" id="detailModal"></div>
+
+    
+{% endblock content %}
+    
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/dataTables.material.min.js"></script>
+  <script type="text/javascript">
+
+        $(document).ready(function(){
+            search_columns = [0,1,2];
+            select_columns = []
+            var table = $('#data-table-example').DataTable({
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                "dom": '<"top"l>rt<"bottom"<"pull-left"i><"pull-right"p>>',
+                "searching": true,
+                "columnDefs": [
+                    {
+                        "targets": [3],
+                        "sortable": false,
+                    }],
+                initComplete: function (){
+                    initSelectBox(this, select_columns);    
+                }
+            });
+            initSearchBox(table, search_columns);
+
+        });
+
+        function initSearchBox(table, search_columns){
+            var tfoot_ths = $('table tfoot th');
+            search_columns.forEach(function(i){
+                var tfoot_th = tfoot_ths[i];
+                var title = $.trim($(tfoot_th).text());
+                $(tfoot_th).html( '<input type="text" class="filter"/>' );
+            });
+
+            table.columns(search_columns).every( function () {
+                var that = this;
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                });
+            });
+        }
+
+        function initSelectBox(table, select_columns){
+            table.api().columns(select_columns).every( function () {
+                var column = this;
+                var select = $('<select><option value="">-----All-----</option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+                
+                column.data().unique().sort().each( function ( d, j ) {
+                    val = $(d).text();
+                    select.append('<option value='+val+'>'+val+'</option>');
+                } );
+            });
+        }
+
+        function showDetail(id){
+            var modal = $('#detailModal');
+            $.ajax({
+                url: "{% url "Settings:holiday_detail" 0 %}".replace('0', id),
+                success: function(response){
+                    modal.html(response);
+                    modal.modal();
+                },
+                error: function(){
+                    console.log("problem loading modal data");
+                }
+            });
+        }
+
+  </script>
+    
+{% endblock additional_script %}

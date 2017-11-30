@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <title> Invoice Manager {% block head_title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% include 'partials/_header.html' %}
+
+    {% block additional_style %}
+
+    {% endblock %}
+
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+
+    {% include 'partials/_top-nav.html' %}
+    {% include 'partials/_side-menu.html' %}
+
+         <!--  PAPER WRAP -->
+    <div class="wrap-fluid">
+        <div class="container-fluid paper-wrap bevel tlbr">
+            <!-- CONTENT -->
+
+            <!-- BREADCRUMB -->
+            <div class="row" id="paper-top">
+                <div class="col-md-8">
+                    <ul id="breadcrumb">
+                        <li><a href="{% url HOME_URL %}">
+                            <span class="entypo-home"> Home</span>
+                            </a>
+                        </li>
+
+                        {% block breadcrumb %}
+
+                        {% endblock %}
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="devider-vertical visible-lg"></div>
+                    <div class="tittle-middle-header">
+                        <div class="alert">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <span class="tittle-alert entypo-info-circled"></span>
+                            Welcome back,&nbsp;
+                            <strong>{{ request.user.username }} !</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- END OF BREADCRUMB -->
+            <!--TITLE -->
+            <div class="row" id="title-top">
+                <div class="col-sm-4">
+                    <h2 class="tittle-content-header">
+                        <span class="entypo-menu"></span>
+                        <span>
+                            {% block title %}
+
+                            {% endblock %}
+                        </span>
+                    </h2>
+                </div>
+                <div class="col-sm-8 button_container">
+                    {% block button_container %}
+                        
+                    {% endblock  %}
+                </div>
+            </div>
+            <!--/ TITLE -->
+
+            <div class="content-wrap">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="nest" id="FilteringClose">
+                            <div class="body-nest" id="Filtering">
+                                <div class="col-md-8 col-md-offset-2">
+                                    {% include 'partials/_message.html' %}    
+                                </div>
+                                {% block content %}
+
+                                {% endblock %}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- /END OF CONTENT -->
+
+            <!-- FOOTER -->
+            <div class="footer-space"></div>
+            <div id="footer">
+                <div class="devider-footer-left"></div>
+                <div class="time">
+                    <p id="spanDate"></p>
+                    <p id="clock"></p>
+                </div>
+                <div class="copyright">BMS v 1.0.0. Copyright © 2001-2017
+                    <a href="http://datasoft-bd.com">DataSoft.</a> All Rights Reserved</div>
+                <div class="devider-footer"></div>
+
+            </div>
+            <!-- / END OF FOOTER -->
+
+        </div>
+    </div>
+    <!--  END OF PAPER WRAP -->
+
+
+    {% block additional_script %}
+
+    {% endblock %}
+
+    {% include 'partials/_footer.html' %}
+</body>
+
+</html>

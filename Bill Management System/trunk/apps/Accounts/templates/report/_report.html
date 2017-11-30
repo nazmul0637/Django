@@ -1,0 +1,88 @@
+<div class="align-center" style="font-size: 15px;"><strong><u>Profit-Loss Statement</u></strong></div>
+<br><br>
+<div class="row">
+    <label class="col-sm-2">Product/Project</label>
+    <div class="col-sm-6">: &nbsp; &nbsp;{{ product }}</div>
+</div>
+<div class="row">
+    <label class="col-sm-2">Year</label>
+    <div class="col-sm-6">: &nbsp; &nbsp;{{ year }}</div>
+</div>
+{% if month %}
+    <div class="row">
+	    <label class="col-sm-2">Month</label>
+	    <div class="col-sm-6">: &nbsp; &nbsp;{{ month }}</div>
+	</div>
+{% endif %}
+<br>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th width="50%" class="align-center">Incomes</th>
+			<th width="50%" class="align-center">Expenses</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<div class="row">
+					<div class="col-sm-6 "><strong><u>Purpose</u></strong></div>
+					<div class="col-sm-4 align-right"><strong><u>Amount</u></strong></div>
+				</div>
+				{% for income in incomes %}
+					<br>
+					<div class="row">
+						<div class="col-sm-6">
+							{{ income.contract_agreement_purpose__purpose__name }}
+						</div>
+						<div class="col-sm-4 align-right">
+							{{ income.collected_amount__sum }}
+						</div>
+					</div>
+				{% endfor %}
+			</td>
+			<td>
+				<div class="row">
+					<div class="col-sm-6"><strong><u>Purpose</u></strong></div>
+					<div class="col-sm-4 align-right"><strong><u>Amount</u></strong></div>
+				</div>
+				{% for expense in expenses %}
+					<br>
+					<div class="row">
+						<div class="col-sm-6">
+							{{ expense.expense_purpose__name }}
+						</div>
+						<div class="col-sm-4 align-right">
+							{{ expense.amount__sum }}
+						</div>
+					</div>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="row">
+					<div class="col-sm-6">
+						<strong>Total Income</strong>
+					</div>
+					<div class="col-sm-4 align-right">
+						{{ total_income }}
+					</div>
+				</div>
+			</td>
+			<td>
+				<div class="row">
+					<div class="col-sm-6">
+						<strong>Total Expense</strong>
+					</div>
+					<div class="col-sm-4 align-right">
+						{{ total_expense }}
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="align-right" style="font-size: 15px;"><strong>Net Profit/Loss: </strong>&nbsp;{{ net_profit }}</td>
+		</tr>
+	</tbody>
+</table>

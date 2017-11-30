@@ -1,0 +1,171 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+{% block additional_style %}
+	<style type="text/css">
+		fieldset {
+			border: 1px solid #ddd !important;
+			margin: 0;
+			xmin-width: 0;
+			padding: 10px;       
+			position: relative;
+			border-radius:1px;
+			background-color:#f5f5f5;
+			padding-left:10px!important;
+		}	
+	
+		legend{
+			font-size:14px;
+			font-weight:bold;
+			margin-bottom: 0px; 
+			width: 35%; 
+			border: 1px solid #ddd;
+			border-radius: 1px; 
+			padding: 5px 5px 5px 10px; 
+			background-color: #ffffff;
+		}
+	</style>  
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:contract_agreement_detail" contract_agreement.get_encoded_id %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-6">
+					<fieldset>
+					    <legend>Agreement Details</legend>
+						<div style="padding: 0% 5%;">	
+							<div class="row">
+								<label class="col-sm-4">Product</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.product }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Portfolio</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.product.portfolio }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Agreement Date</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.agreement_date }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Net Amount {% if contract_agreement.vat %}(Without VAT){% endif %}</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.net_amount }}</div>
+							</div>
+							{% if contract_agreement.vat %}
+							<div class="row">
+								<label class="col-sm-4">VAT</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.get_vat }}</div>
+							</div>
+							{% endif %}
+							<div class="row">
+								<label class="col-sm-4">Payment type</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.mode_of_payment }}</div>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+
+				<div class="col-md-6">
+					<fieldset>
+						<legend>Client Details</legend>
+						<div style="padding: 0% 5%;">	
+							<div class="row">
+								<label class="col-sm-4">Client Name</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.client }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Address</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.client.address }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Contact Number</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.client.contact_number }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Email</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.client.get_email }}</div>
+							</div>
+							<div class="row">
+								<label class="col-sm-4">Concern Persons</label>
+								<div class="col-sm-1">:</div>
+								<div class="col-sm-7">{{ contract_agreement.get_concern_persons }}</div>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+			
+			<h6 align="center">Purposes</h6>
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th width="50%">Purpose Name</th>
+						<th width="15%">No. of Installment</th>
+						<th width="20%" class="align-right">Amount Per Installment</th>
+						<th width="15%" class="align-right">Total Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for contract_agreement_purpose in contract_agreement.purposes.all %}
+					<tr>
+						<td>{{ contract_agreement_purpose }}</td>
+						<td class="align-center">{{ contract_agreement_purpose.num_installment }}</td>
+						<td class="align-right">{{ contract_agreement_purpose.get_per_installment_amount }}</td>
+						<td class="align-right">{{ contract_agreement_purpose.amount }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+
+			<h6 align="center">Bill Schedules</h6>
+			{% for purpose in contract_agreement.purposes.all %}
+			<strong>{{ purpose }}</strong>
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th width="60%">Particular</th>
+						<th width="25%" class="align-center">Schedule Date</th>
+						<th width="15%" class="align-right">Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+						{% for bill_schedule in purpose.bill_schedules.all %}
+							<tr>
+								<td>{{ bill_schedule.particular }}</td>
+								<td class="align-center">{{ bill_schedule.schedule_date }}</td>
+								<td class="align-right">{{ bill_schedule.amount }}</td>
+							</tr>
+						{% endfor %}
+				</tbody>
+			</table>
+			{% endfor %}
+		</div>
+	</div>
+    
+{% endblock content %}

@@ -1,0 +1,50 @@
+
+<div class="modal-dialog" role="document" id="modal_detail">
+  <div class="modal-content">
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel" align="center">Bank Account Details</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <label class="col-sm-3">Account Name</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.name_of_account }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Account Number</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.account_no }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Bank Name</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.bank_name }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Branch Name</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.branch_name }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Address:</label>
+        <div class="col-sm-8">: &nbsp; &nbsp;{{ account.address }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Swift Code</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.swift_code }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Routing Number</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.routing_no }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Entry on</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.created_at|timesince }} ago</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Last Update</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ account.updated_at|timesince }} ago</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button", class="btn btn-info", data-dismiss="modal">Bact to the List</button>  
+    </div>
+  </div>
+</div>

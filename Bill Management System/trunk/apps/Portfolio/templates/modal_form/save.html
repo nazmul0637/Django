@@ -1,0 +1,53 @@
+
+<div class="modal-dialog" role="document" id="modal_center">
+  <div class="modal-content">
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel">{{ title }}</h4>
+    </div>
+    <div class="modal-body">
+      <form id="saveFrm" action="" method="POST" class="form-horizontal bucket-form" >
+          {% csrf_token %}
+          {% for field in form.visible_fields %}
+              
+              <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}
+                    {% if field.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                    <div class="col-sm-6 form_input_container">
+                        {% if field.field.widget.attrs.class == "checkbox_input" %}
+                            <div class=" checkbox">
+                                <label class="control-label">
+                                    {{ field }} Active
+                                </label>    
+                            </div>
+                        {% elif field.field.widget.attrs.class == 'form-control datetime-input' %}
+                            {{ field }}<i class="form-control-feedback glyphicon glyphicon-calendar"></i>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        <div {% if field.errors %}class="error"{% endif %}>
+                        {% for error in field.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+          
+          {% endfor %}
+          <div class="form-group">
+              <div class="col-sm-6 col-sm-offset-4">
+                  <input type="submit" class="btn btn-primary" value="Save">&nbsp;&nbsp;
+                  <button type="button", class="btn btn-danger", data-dismiss="modal">Cancel</button>
+              </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $('.select2').select2({ width: '100%' });
+    $( ".datetime-input" ).datetimepicker({
+        format:'YYYY-MM-DD'
+    });
+</script>

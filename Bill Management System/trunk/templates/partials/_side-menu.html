@@ -1,0 +1,156 @@
+{% load static %}
+<div id="skin-select">
+    <div id="logo">
+        <h6>
+            <a href="{% url HOME_URL %}"><img alt="Logo" src="{% static '' %}img/invoice_manager_logo.png" width="170"></a>
+        </h6>
+    </div>
+
+    <a id="toggle">
+        <span class="entypo-menu"></span>
+    </a>
+    
+    <div class="skin-part">
+        <div id="tree-wrap">
+            <div class="side-bar">
+                <ul class="topnav menu-left-nest">
+                    <li>
+                        <div style="border-left:0px solid!important;" class="title-menu-left">
+                            <span class="widget-menu">App Menu</span>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="tooltip-tip2 ajax-load" href="{% url HOME_URL %}" title="Dashboard"><i class="icon-window"></i><span>Dashboard</span></a>
+                    </li>
+
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Portfolio">
+                            <i class="entypo-database"></i>
+                            <span>Portfolio</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Portfolio:portfolio_index' %}" title="Portfolio List"><i class="entypo-doc-text"></i><span>Portfolio List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Portfolio:product_index' %}" title="Product List"><i class="entypo-doc-text"></i><span>Product List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Portfolio:purpose_index' %}" title="Purpose List"><i class="entypo-doc-text"></i><span>Purpose List</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Employees">
+                            <i class="entypo-briefcase"></i>
+                            <span>Employees</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Employees:employee_index' %}" title="Employee List"><i class="entypo-doc-text"></i><span>Employee List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Employees:employee_save' %}" title="Add Employee"><i class="entypo-doc-text"></i><span>Add Employee</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Employees:designation_index' %}" title="Designations"><i class="entypo-doc-text"></i><span>Designations</span></a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Clients">
+                            <i class="entypo-users"></i>
+                            <span>Clients</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Clients:client_index' %}" title="Client List"><i class="entypo-doc-text"></i><span>Client List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Clients:client_save' %}" title="Add Client"><i class="entypo-doc-text"></i><span>Add Client</span></a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Invoicing">
+                            <i class="entypo-clipboard"></i>
+                            <span>Invoicing</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Invoicing:contract_agreement_index' %}" title="ContractAgreement List"><i class="entypo-doc-text"></i><span>Contract Agreement List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Invoicing:invoice_index' %}" title="Invoice List"><i class="entypo-doc-text"></i><span>Invoice List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Invoicing:invoice_save' %}" title="Generate Invoice"><i class="entypo-doc-text"></i><span>Generate Invoice</span></a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Accounts">
+                            <i class="entypo-chart-pie"></i>
+                            <span>Accounts</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Accounts:expense_purpose_index' %}" title="Expense Purpose"><i class="entypo-doc-text"></i><span>Expense Purpose</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Accounts:expenditure_index' %}" title="Expenditure"><i class="entypo-doc-text"></i><span>Expenditure</span></a>
+                            </li>
+
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Accounts:collection_save' %}" title="Ledger Head"><i class="entypo-doc-text"></i><span>Add Collection</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Accounts:collection_index' %}" title="Collection List"><i class="entypo-doc-text"></i><span>Collection List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Accounts:report_generate' %}" title="Generate Report"><i class="entypo-doc-text"></i><span>Generate Report</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Settings">
+                            <i class="entypo-tools"></i>
+                            <span>Settings</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Settings:invoice_template_index' %}" title="Invoice Template List"><i class="entypo-doc-text"></i><span>Invoice Template List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Settings:account_index' %}" title="Bank Account List"><i class="entypo-doc-text"></i><span>Bank Account List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Settings:holiday_index' %}" title="Holiday List"><i class="entypo-doc-text"></i><span>Holiday List</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li>
+                        <a class="tooltip-tip ajax-load" href="#" title="Users">
+                            <i class="entypo-user"></i>
+                            <span>Users</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Auth:user_index' %}" title="User List"><i class="entypo-doc-text"></i><span>User List</span></a>
+                            </li>
+                            <li>
+                                <a class="tooltip-tip2 ajax-load" href="{% url 'Auth:user_save' %}" title="Add User"><i class="entypo-newspaper"></i><span>Add User</span></a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>

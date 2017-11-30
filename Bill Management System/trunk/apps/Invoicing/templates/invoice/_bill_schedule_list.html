@@ -1,0 +1,109 @@
+<table class="table table-bordered">
+	<caption><h6>Bill Schedules</h6></caption>
+	<thead>
+		<tr>
+			<th width="5%" class="align-center"><input type="checkbox" id="id_check_all"></th>
+			<th width="5%" class="align-center">SEL</th>
+			<th width="50%">Purpose</th>
+			<th width="20%" class="align-center">Schedule Date</th>
+			<th width="20%" class="align-right">Amount</th>
+		</tr>
+	</thead>
+	<tbody class="bill_schedules">
+		{% if bill_schedules|length == 0 %}
+		    <tr>
+		    	<td colspan="5" class="align-center"><p class="error">No bill schedules are available for generating invoice</p></td>
+		    </tr>
+		{% endif %}
+
+		{% for bill_schedule in bill_schedules %}
+			<tr>
+				<td class="align-center">
+				<input type="checkbox" name="bill_schedule", class="schedule_check_box" value="{{ bill_schedule.id }}">
+				<input type="text" class="subject_content" hidden="hidden" value="{{ bill_schedule.get_installment_num }} installment for {{ bill_schedule.contract_agreement_purpose }}">
+				</td>
+				<td class="align-center">{{ forloop.counter }}</td>
+				<td class="purpose">{{ bill_schedule.contract_agreement_purpose }}</td>
+				<td class="align-center">{{ bill_schedule.schedule_date }}</td>
+				<td class="align-right">{{ bill_schedule.amount }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% if bill_schedules|length > 0 %}
+	<p class="error" align="center" id="bill_schedule_error"></p>
+	<div class="form-group">
+		<label for="subject">Subject of Invoice:</label>
+		<div class="form_input_container">
+			<input type="text" name="subject" id="id_subject">
+			<p class="error" id="subject_error"></p>
+		</div>
+		<label for="invoice_date">Invoice Date:</label>
+		<div class="form_input_container">
+			<input type="text" name="invoice_date" class="datetime-input" id="id_invoice_date" style="width: 20%;">
+			<p class="error" id="invoice_date_error"></p>
+		</div>
+	</div>
+
+	<div class="form-group">
+	    <a href="" onclick="showPreview();return false;" class="btn btn-primary btn-success pull-right" id="id_preview">Preview</a>
+	</div>
+{% endif %}
+<script type="text/javascript">
+	$(".datetime-input" ).datetimepicker({
+        format:'YYYY-MM-DD'
+    });
+	$('#id_check_all').click(function(){
+        $(".schedule_check_box").prop('checked', $(this).prop('checked'));
+    });
+
+    $('input[type=checkbox]').change(function(){
+    	$('#id_subject').val("");
+    	$('.preview').hide();
+    });
+
+    $('#id_subject').click(function(){
+    	if($('#id_subject').val()==""){
+    		subject_text = ""
+    		$('.schedule_check_box').each(function(){
+    			if(this.checked){
+    				subject_text+=$(this).next('input').val()+","
+    			}
+    		});
+    		if(subject_text!=""){
+    			$(this).val("Invoice Against "+ subject_text.slice(0,-1));
+    		}
+    	}
+    });
+
+    function showPreview(){
+    	if($('.schedule_check_box:checked').length==0){
+    		$('#bill_schedule_error').html("No bill schedule has been selected for invoice");
+    		return;
+    	}
+    	else $('#bill_schedule_error').html("");
+
+    	if($('#id_subject').val()==""){
+    		$('#subject_error').html("Subject can not be empty");
+    		return;
+    	}
+    	else $('#subject_error').html("");
+
+    	if($('#id_invoice_date').val()==""){
+    		$('#invoice_date_error').html("Enter invoice date");
+    		return;
+    	}
+    	else $('#invoice_date_error').html("");
+
+    	$.ajax({
+        	type: 'POST',
+            url:"{% url "Invoicing:get_preview" %}",
+            data: $('#invoice_form').serialize(),
+            success: function(data){
+            	$('.preview_body').html(data);
+            	$('.preview').show();
+        	}
+        });
+    }
+
+</script>

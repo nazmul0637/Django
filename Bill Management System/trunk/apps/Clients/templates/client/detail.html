@@ -1,0 +1,77 @@
+
+<div class="modal-dialog" role="document" id="modal_detail">
+  <div class="modal-content">
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel" align="center">Client Detail</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <label class="col-sm-3">Name</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Code</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.code }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Address</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.address }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Contact Number</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.contact_number }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Email</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.email }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Description</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.get_description }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Status</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.get_status }}</div>
+      </div>
+      
+      <div class="row">
+        <label class="col-sm-3">Entry on</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.created_at|timesince }} ago</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Last Update</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ client.updated_at|timesince }} ago</div>
+      </div>
+
+      <div align="center"><h5>Concern Persons</h5></div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Designation</th>
+            <th>Division</th>
+            <th>Contact Number</th>
+            <th>Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for concern_person in client.concern_persons.all %}
+            <tr>
+              <td>{{ concern_person.name }}</td>
+              <td>{{ concern_person.designation }}</td>
+              <td>{{ concern_person.division }}</td>
+              <td>{{ concern_person.contact_number }}</td>
+              <td>{{ concern_person.get_email }}</td>
+              <td><span class="label label-{% if concern_person.status %}success {% else %} default{% endif %}">{{ concern_person.get_status }}</span></td></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button", class="btn btn-info", data-dismiss="modal">Bact to the List</button>  
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="modal-dialog" role="document" id="modal_detail">
+  <div class="modal-content">
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel" align="center">Expenditure</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <label class="col-sm-3">Product/Project</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ expenditure.product }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Expense ID</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ expenditure.exp_id }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Date</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ expenditure.date }}</div>
+      </div>
+      <div align="center"><h5>Expenses</h5></div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Expense Purpose</th>
+            <th class="align-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for expenditure_detail in expenditure.expenditure_details.all %}
+            <tr>
+              <td>{{ expenditure_detail.expense_purpose }}</td>
+              <td class="align-right">{{ expenditure_detail.amount }}</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td class="align-right">Total: </td>
+            <td class="align-right">{{ expenditure.get_total_expense }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button", class="btn btn-info", data-dismiss="modal">Bact to the List</button>  
+    </div>
+  </div>
+</div>

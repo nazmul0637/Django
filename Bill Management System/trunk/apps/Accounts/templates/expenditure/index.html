@@ -1,0 +1,133 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| {{ title }} List
+{% endblock %}
+
+{% block additional_style %}
+    <link rel="stylesheet" href="{% static '' %}js/dataTable/css/jquery.dataTables.min.css" />
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Accounts:expenditure_index" %}">{{ title }} List</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }} List
+{% endblock %}
+
+{% block button_container %}
+    <a href="{% url "Accounts:expenditure_save" %}" class="btn btn-primary pull-right">Add {{ title }}</a>
+{% endblock button_container %}
+
+{% block content %}
+    <table class="table table-bordered" id="data-table-example">
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    	<thead>
+    		<tr>
+                <th>SL</th>
+    			<th width="40%">Product/Project</th>
+    			<th width="10%" class="align-center">Expense ID</th>
+                <th width="20%" class="align-center">Date</th>
+                <th width="20%" class="align-right">Total Expense</th>
+                <th width="10%" class="align-center">Action</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		{% for expenditure in expenditures %}
+    			<tr>
+                    <td>{{ forloop.counter }}</td>
+    				<td>{{ expenditure.product }}</td>
+    				<td class="align-center">{{ expenditure.exp_id }}</td>
+                    <td class="align-center" data-order={{ expenditure.get_date }}>{{ expenditure.date }}</td>
+                    <td class="align-right">{{ expenditure.get_total_expense }}</td>
+                    <td class="align-center">
+                        <a href="" onclick="showDetail({{ expenditure.id }}); return false;" title="Show Detail"><span class="glyphicon glyphicon-search text-success"></span></a>| 
+                        <a href="{% url "Accounts:expenditure_save" expenditure.get_encoded_id %}" title="Edit"><span class="glyphicon glyphicon-edit text-info"></span></a>| 
+                        <a href="{% url "Accounts:expenditure_delete" expenditure.get_encoded_id %}" onclick="return confirm('Are you sure to delete this data?');" title="Delete"><span class="glyphicon glyphicon-remove text-warning"></span></a>
+                    </td>
+    			</tr>
+    		{% endfor %}
+    	</tbody>
+    </table>
+<div class="modal fade" tabindex="-1" role="dialog" id="detailModal"></div>
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/dataTables.material.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            search_columns = [1,2,3,4];
+            select_columns = [];
+            var table = $('#data-table-example').DataTable({
+                /*serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{% url "Employees:employee_index" %}",
+                    type: 'POST'  
+                },*/
+
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                "dom": '<"top"l>rt<"bottom"<"pull-left"i><"pull-right"p>>',
+                "searching": true,
+                "columnDefs": [
+                    {
+                        "targets": [0,5],
+                        "sortable": false,
+                    }],
+            });
+            initSearchBox(table, search_columns);
+
+        });
+
+        function initSearchBox(table, search_columns){
+            var tfoot_ths = $('table tfoot th');
+            search_columns.forEach(function(i){
+                var tfoot_th = tfoot_ths[i];
+                var title = $.trim($(tfoot_th).text());
+                $(tfoot_th).html( '<input type="text" class="filter"/>' );
+            });
+
+            table.columns(search_columns).every( function () {
+                var that = this;
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                });
+            });
+        }
+
+        function showDetail(id){
+            var modal = $('#detailModal');
+            $.ajax({
+                url: "{% url "Accounts:expenditure_detail" 0 %}".replace('0', id),
+                success: function(response){
+                    modal.html(response);
+                    modal.modal();
+                },
+                error: function(){
+                    console.log("problem loading modal data");
+                }
+            });
+        }
+    </script>
+{% endblock additional_script %}

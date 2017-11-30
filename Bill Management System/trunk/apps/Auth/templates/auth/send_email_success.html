@@ -1,0 +1,34 @@
+{% extends "layouts/login_base.html" %}
+{% load static from staticfiles %}
+
+{% block title %}
+    Reset Password
+{% endblock title %}
+
+{% block additional_style %}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/signin.css' %}">
+{% endblock additional_style %}
+
+{% block body %}
+	<div class="container">
+		<div class="" id="login-wrapper">
+	        <div class="row">
+	            <div class="col-md-4 col-md-offset-4">
+	                <div id="logo-login">
+	                    <h1>Reset Password</h1>
+	                </div>
+	            </div>
+	        </div>
+
+	        <div class="row">
+	            <div class="col-md-4 col-md-offset-4">
+	                <div class="account-box">
+	                	<p>Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.</p>
+	                	<a href="{% url "Auth:login" %}" class="btn btn-block btn-primary">Return to login</a>
+	                </div>
+	            </div>
+	        </div>
+    	</div>
+	</div>
+    
+{% endblock body %}

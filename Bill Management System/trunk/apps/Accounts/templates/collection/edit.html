@@ -1,0 +1,133 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Accounts:collections_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+    <div class="panel-body">
+        <form method="POST" action="" class="form-horizontal bucket-form">
+            {% csrf_token %}
+            
+                
+                <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="Select Invoice No">Select Invoice No
+                    <span class="required_field_indicator">*</span></label>
+                    <div class="col-sm-6 form_input_container">
+                            <!-- {{ collection.invoice }} -->
+                            <select class="select2" name="" id="id_invoice">
+                                <option value="{{ collection }}">Invoice No: {{ collection.invoice }}</option>
+                        
+                            </select>
+                        <div {% if collection.invoice.errors %}class="error"{% endif %}>
+                        {% for error in collection.invoice.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div> 
+                <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="Invoice Amount">Invoice Amount
+                    <span class="required_field_indicator">*</span></label>
+                    <div class="col-sm-6">
+                            <input type="text" name="code"  disabled=""  class="form-control" required="">
+                        
+                    </div>
+                </div> 
+                <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="Collected Amount">Collected Amount
+                    <span class="required_field_indicator">*</span></label>
+                    <div class="col-sm-6 form_input_container">
+                    <input type="text" name="code"  value={{ collection.collected_amount }} class="form-control" required="">
+                        <div {% if collection.collected_amount.errors %}class="error"{% endif %}>
+                        {% for error in collection.collected_amount.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="Collection Date">Collection Date
+                    <span class="required_field_indicator">*</span></label>
+                    <div class="col-sm-6 form_input_container">
+                    <!-- <input type="text"  value={{ collection.collection_date }} class="form-control" required=""> -->
+                    <input id="meeting" type="date" value={{ collection.collection_date }} class="form-control" required=""/>
+                             <i class="form-control-feedback glyphicon glyphicon-calendar"></i>
+                        <div {% if collection.collection_date.errors %}class="error"{% endif %}>
+                        {% for error in collection.collection_date.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div> 
+                 <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="Particulars">Particulars
+                    <span class="required_field_indicator">*</span></label>
+                    <div class="col-sm-6 form_input_container">
+                    <textarea type="text" class="form-control" required="">{{ collection.particulars }}</textarea>
+                            
+                        <div {% if collection.particulars.errors %}class="error"{% endif %}>
+                        {% for error in collection.particulars.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <input type="submit" class="btn btn-primary" value="Save">&nbsp;&nbsp;
+                    <a href="{{ next }}" class="btn btn-danger">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            if($('#id_invoice').val()!=null){
+                var invoice_id=$(this).val();
+                if(invoice_id){
+                    $.ajax({
+                        url: "{% url "Accounts:get_invoice_amount" 0 %}".replace('0', invoice_id),
+                        success: function(data){
+                             $('input:disabled').val(data.amount);
+                        }
+                    });
+                }
+            }
+            $('#id_invoice').change(function(){
+                var invoice_id = $(this).val();
+                if(invoice_id){
+                    $.ajax({
+                        url: "{% url "Accounts:get_invoice_amount" 0 %}".replace('0', invoice_id),
+                        success: function(data){
+                             $('input:disabled').val(data.amount);
+                        }
+                    });
+                }
+                else{
+                    $('input:disabled').val("");
+                }    
+            });
+        });
+
+  </script>
+    
+{% endblock additional_script %}

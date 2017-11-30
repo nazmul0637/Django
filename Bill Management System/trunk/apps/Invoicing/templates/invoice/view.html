@@ -1,0 +1,71 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:invoice_view" invoice.get_encoded_id %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block button_container %}
+	<a href="{% url "Invoicing:invoice_index" %}" class="btn btn-primary pull-right">Back to List</a>
+{% endblock button_container %}
+
+{% block content %}
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="invoice_body" style="background: white; padding: 3%;">
+              {{ invoice_body|safe }}                
+            </div>
+        </div>
+    </div>
+    {% if invoice.status == 0 %}
+    <a href="{% url "Invoicing:invoice_submit" invoice.get_encoded_id %}" class="btn btn-primary">Submit</a>
+    {% endif %}
+	<div class="pull-right">
+		<a href="javascript:genPDF()" class="btn btn-success">Download PDF</a> &nbsp;&nbsp;&nbsp;
+		<a href="javascript:printInvoice({% static '' %})" class="btn btn-success">Print</a>
+	</div>
+
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/jspdf.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/html2canvas.js"></script>
+    <script type="text/javascript">
+        function genPDF(){
+            var pdf = new jsPDF();
+            var options = {
+                pagesplit: false
+            };
+
+            pdf.addHTML($('#invoice_body'), 0, 0, options, function(){
+                pdf.save("invoice.pdf");
+            });
+        }
+        function printInvoice(static_url){
+            console.log(static_url);
+            var mywindow = window.open('', 'new div', 'height=400,width=600');
+            mywindow.document.write('<html><head><title></title>');
+            mywindow.document.write('<link rel="stylesheet" href="'+static_url+'css/print_style.css" type="text/css" media="print" />');
+            mywindow.document.write('</head><body>');
+            mywindow.document.write($('#invoice_body').html());
+            mywindow.document.write('</body></html>');
+
+            mywindow.print();
+            mywindow.close();
+        }
+    </script>
+{% endblock additional_script %}

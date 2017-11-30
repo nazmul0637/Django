@@ -1,0 +1,48 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| Template Detail
+{% endblock %}
+
+{% block additional_style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Settings:invoice_template_detail" invoice_template.get_encoded_id %}">Template Detail</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+Template Detail
+{% endblock %}
+
+{% block button_container %}
+    <a href="{% url "Settings:invoice_template_index" %}" class="btn btn-primary pull-right">Back to List</a>
+{% endblock button_container %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="col-xs-12 col-sm-12 profile-name">
+            <h4>{{ invoice_template.title }}</h4>
+            <hr>
+                {{ invoice_template.template_body|safe }} 
+            <div style="margin: 10px;">
+                <a class="btn btn-block btn-primary" href="{% url "Settings:invoice_template_save" invoice_template.get_encoded_id %}?next={{ request.path }}">Edit Detail</a>
+            </div>
+        </div>
+
+    </div>
+    
+</div>
+    
+{% endblock content %}
+
+{% block additional_script %}
+{% endblock additional_script %}

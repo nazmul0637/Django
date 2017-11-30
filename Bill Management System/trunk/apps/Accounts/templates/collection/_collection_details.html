@@ -1,0 +1,36 @@
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th width="5%" class="align-center">SL</th>
+			<th width="55%">Particular</th>
+			<th width="20%" class="align-right">Billable Amount</th>
+			<th width="20%" class="align-right">Paid Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for bill_schedule in bill_schedules %}
+			<input type="number" name="purpose" value="{{ bill_schedule.contract_agreement_purpose.pk }}" hidden>
+			<tr>
+				<td class="align-center">{{ forloop.counter }}</td>
+				<td>{{ bill_schedule.particular }}</td>
+				<td class="align-right">{{ bill_schedule.amount }}</td>
+				<td><input class="align-right paid_amount" type="number" min="0" name="paid_amount-{{ bill_schedule.contract_agreement_purpose.pk }}" value="{{ bill_schedule.amount }}" required></td>
+			</tr>
+		{% endfor %}
+		<tr>
+			<td colspan="2" class="align-right"><strong>Total:</strong></td>
+			<td class="align-right">{{ invoice.amount }}</td>
+			<td><input class="align-right" type="number" id="total_paid_ammount" name="total_paid_ammount" value="{{ invoice.amount }}" readonly="readonly"></td>
+		</tr>
+	</tbody>
+</table>
+
+<script type="text/javascript">
+	$('.paid_amount').on('input', function(){
+		var total_paid_ammount = 0.0;
+		$('.paid_amount').each(function(){
+			total_paid_ammount += parseFloat($(this).val());
+		});
+		$('#total_paid_ammount').val(total_paid_ammount);
+	});
+</script>

@@ -1,0 +1,150 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| {{ title }} List
+{% endblock %}
+
+{% block additional_style %}
+    <link rel="stylesheet" href="{% static '' %}js/dataTable/css/jquery.dataTables.min.css" />
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:invoice_index" %}">{{ title }} List</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }} List
+{% endblock %}
+
+{% block button_container %}
+    <a href="{% url "Invoicing:invoice_save" %}" class="btn btn-primary pull-right">Generate {{ title }}</a>
+{% endblock button_container %}
+
+{% block content %}
+    <table class="table table-bordered" id="data-table-example" style="width: 100%;">
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>Invoice no.</th>
+                <th>Product</th>
+                <th>Client</th>
+                <th>Subject</th>
+                <th>Invoice Date</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+        <thead>
+            <tr>
+                <th class="align-center">SL</th>
+                <th width="15%">Invoice no.</th>
+                <th width="15%">Product/Project</th>
+                <th width="15%">Client</th>
+                <th width="25%">Subject</th>
+                <th class="align-center" width="10%">Date</th>
+                <th class="align-center" width="10%">Status</th>
+                <th width="10%" class="align-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td class="align-center">{{ forloop.counter }}</td>
+                    <td>{{ invoice.invoice_no }}</td>
+                    <td>{{ invoice.contract_agreement.product }}</td>
+                    <td>{{ invoice.contract_agreement.client }}</td>
+                    <td>{{ invoice.subject }}</td>
+                    <td class="align-center" data-order="{{ invoice.get_date }}">{{ invoice.date }}</td>
+                    <td class="align-center">{{ invoice.get_status }}</td>
+                    <td class="align-center">
+                        <a href="{% url "Invoicing:invoice_view" invoice.get_encoded_id %}" title="Invoice"><span class="glyphicon glyphicon-search text-success"></span></a>| 
+                        <a {% if invoice.status == 0 %} href="{% url "Invoicing:invoice_save" invoice.get_encoded_id %}"{% endif %} title="Edit Invoice"><span class="glyphicon glyphicon-edit {% if invoice.status == 0  %}text-info {% else %}text-muted{% endif %}"></span></a>| 
+                        <a {% if invoice.status == 0 %} href="{% url "Invoicing:invoice_delete" invoice.get_encoded_id %}"{% endif %} onclick="return confirm('Are you sure to delete this data?');" title="Delete"><span class="glyphicon glyphicon-remove {% if invoice.status == 0  %}text-warning {% else %}text-muted{% endif %}""></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/dataTables.material.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            search_columns = [1,2,3,4,5];
+            select_columns = [6];
+            var table = $('#data-table-example').DataTable({
+                /*serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{% url "Invoicing:contract_agreement_index" %}",
+                    type: 'POST'  
+                },*/
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                "dom": '<"top"l>rt<"bottom"<"pull-left"i><"pull-right"p>>',
+                "searching": true,
+                "columnDefs": [
+                    {
+                        "targets": [0,7],
+                        "sortable": false,
+                    }],
+                initComplete: function (){
+                    initSelectBox(this, select_columns);    
+                }
+            });
+            initSearchBox(table, search_columns);
+
+        });
+
+        function initSearchBox(table, search_columns){
+            var tfoot_ths = $('table tfoot th');
+            search_columns.forEach(function(i){
+                var tfoot_th = tfoot_ths[i];
+                var title = $.trim($(tfoot_th).text());
+                $(tfoot_th).html( '<input type="text" class="filter"/>' );
+            });
+
+            table.columns(search_columns).every( function () {
+                var that = this;
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                });
+            });
+        }
+
+        function initSelectBox(table, select_columns){
+            table.api().columns(select_columns).every( function () {
+                var column = this;
+                var select = $('<select><option value="">-----All-----</option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? val : '', true, false )
+                            .draw();
+                    } );
+                
+                select.append('<option value="Draft">Draft</option>');
+                select.append('<option value="Submitted">Submitted</option>');
+                select.append('<option value="Due">Due</option>');
+                select.append('<option value="Submitted">Paid</option>');
+            });
+        }
+
+  </script>
+
+{% endblock additional_script %}

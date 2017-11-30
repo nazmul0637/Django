@@ -1,0 +1,142 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Accounts:report_generate" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+    	<div class="panel-body">
+    		<form method="POST" action="" id="report_form">
+    			{% csrf_token %}
+	    		<div class="row">
+		    		<div class="col-sm-6">
+		    			<label for="product">Product <span class="error" id="product_error"></label>
+		    			<select class="select2", name="product", id="id_product">
+		    		        <option value="">Select Product</option>
+		    		        {% for product in products %}
+		    					<option value="{{ product.pk }}">{{ product }}</option>
+		    		        {% endfor %}	
+		    			</select>
+		    		</div>
+		    		<div class="col-sm-6">
+		    			<div class="col-sm-6">
+		    				<label for='month'>Month</label>
+		    				<select class="select2" name="month" id="id_month">
+		    					<option value="">All Month</option>
+		    					<option value='1'>Janaury</option>
+							    <option value='2'>February</option>
+							    <option value='3'>March</option>
+							    <option value='4'>April</option>
+							    <option value='5'>May</option>
+							    <option value='6'>June</option>
+							    <option value='7'>July</option>
+							    <option value='8'>August</option>
+							    <option value='9'>September</option>
+							    <option value='10'>October</option>
+							    <option value='11'>November</option>
+							    <option value='12'>December</option>
+		    				</select>
+		    			</div>
+		    			<div class="col-sm-6">
+		    				<label for="year">Year <span class="error" id="year_error"></span></label>
+		    				<select class="select2" name="year" id="id_year">
+		    					<option value="">Select Year</option>
+		    					{% for year in year_range %}
+		    						{% if year == current_year %}
+		    							<option value="{{ year }}" selected>{{ year }}</option>
+		    						{% else %}
+		    						    <option value="{{ year }}">{{ year }}</option>
+		    						{% endif %}
+		    					{% endfor %}
+		    				</select>
+		    				
+		    			</div>
+		    		</div>    			
+	    		</div>
+	    		<br>
+	    		<a href="" onclick="showReport();return false;" class="btn btn-primary btn-success">Generate Report</a>
+	    	</form>
+	    	<br>
+	    	<div class="report" style="display: none;">
+	    		<div class="panel panel-default">
+	    			<div class="panel-body" id="report_body" style="background: white;">
+	    				
+	    			</div>
+	    			<div class="pull-right">
+						<a href="javascript:genPDF()" class="btn btn-success">Download PDF</a> &nbsp;&nbsp;&nbsp;
+						<!-- <a href="javascript:printInvoice({% static '' %})" class="btn btn-success">Print</a> -->
+					</div>
+	    		</div>
+	    	</div>
+	    	
+    	</div>
+    </div>
+{% endblock content %}
+
+{% block additional_script %}
+	<script type="text/javascript" src="{% static '' %}js/jspdf.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/html2canvas.js"></script>
+    <script type="text/javascript">
+    	function showReport(){
+    		if($('#id_product').val()==""){
+    			$('#product_error').html("(No product is selected)");
+    			return;
+    		}
+    		else $('#product_error').html("");
+    		if($('#id_year').val()==""){
+    			$('#year_error').html("(No year is selected)");
+    			return;
+    		}
+    		else $('#year_error').html("");
+
+    		$.ajax({
+    			type: 'POST',
+    			url: "{% url "Accounts:get_report" %}",
+    			data: $('#report_form').serialize(),
+    			success:function(data){
+    				$('#report_body').html(data);
+    				$('.report').show();
+    			}
+
+    		})
+    	}
+
+    	function genPDF(){
+            var pdf = new jsPDF();
+            var options = {
+                pagesplit: false
+            };
+
+            pdf.addHTML($('#report_body'), 0, 0, options, function(){
+                pdf.save("profit-loss-statement.pdf");
+            });
+        }
+        function printInvoice(static_url){
+            console.log(static_url);
+            var mywindow = window.open('', 'new div', 'height=400,width=600');
+            mywindow.document.write('<html><head><title></title>');
+            mywindow.document.write('<link rel="stylesheet" href="'+static_url+'css/print_style.css" type="text/css" media="print" />');
+            mywindow.document.write('</head><body>');
+            mywindow.document.write($('#report_body').html());
+            mywindow.document.write('</body></html>');
+
+            mywindow.print();
+            mywindow.close();
+        }
+    </script>
+{% endblock additional_script %}

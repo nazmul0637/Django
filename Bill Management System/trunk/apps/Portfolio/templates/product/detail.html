@@ -1,0 +1,96 @@
+
+<div class="modal-dialog" role="document" id="modal_detail">
+  <div class="modal-content">
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel" align="center">{{ product.name }}</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <label class="col-sm-3">Name</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Type</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product.product_type }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Portfolio</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product.portfolio }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Dsecription</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product.description }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Status</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;
+          {% if product.status %}
+            Active
+          {% else %}
+            Closed
+          {% endif %}
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Start Date</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product.start_date }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Duration</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{% if product.status %}Continued....
+            {% else %}
+                  {{ product.start_date|timesince:product.end_date }}
+            {% endif %}
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Entry on</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product.created_at|timesince }} ago</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Last Update</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ product.updated_at|timesince }} ago</div>
+      </div>
+      <div align="center"><h5>Concern Persons</h5></div>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Designation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for concern_person in product.concern_persons.all %}
+            <tr>
+              <td>{{ concern_person }}</td>
+              <td>{{ concern_person.designation }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div align="center"><h5>Purposes</h5></div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product_purpose in product.productpurpose_set.all %}
+            <tr>
+              <td>{{ product_purpose.purpose.name }}</td>
+              <td>{{ product_purpose.amount }} BDT</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button", class="btn btn-info", data-dismiss="modal">Bact to the List</button>  
+    </div>
+  </div>
+</div>

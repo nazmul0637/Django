@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:invoice_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+    	<div class="panel-body">
+    		<form method="POST" action="" id="invoice_form">
+    			{% csrf_token %}	
+	    		<div class="form-group col-sm-7">
+	    			<label for="contract_agreement">Contract Agreement</label>
+	    			<select class="select2" name="contract_agreement" id="id_contract_agreement">
+	    				<option value="">Select Contract Agreement</option>
+	    				{% for contract_agreement in contract_agreements %}
+	    					<option value="{{ contract_agreement.id }}">Product: {{ contract_agreement.product }}, Client: {{ contract_agreement.client }}</option>
+	    				{% endfor %}
+	    			</select>
+                    <input type="number" name="invoice_sequence" hidden="hidden" value="{{ invoice_sequence }}">
+	    		</div>
+                <div class="bill_schedules_container"></div>
+                <br><br>
+                <div class="preview" style="display: none;">
+                    <div class="panel panel-default">
+                        <div class="panel-body preview_body">
+                            
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <input type="submit" class="btn btn-success" name="" value="Save Invoice">
+                        <a href="{% url "Invoicing:invoice_index" %}" class="btn btn-danger">Cancel</a>
+                    </div>
+                </div>
+            </form>
+    	</div>
+    </div>
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$('#id_contract_agreement').change(function(){
+    			contract_agreement_id = $(this).val();
+    			if(contract_agreement_id){
+    				$.ajax({
+    					url: "{% url "Invoicing:bill_schedule_list" 0 %}".replace('0', contract_agreement_id),
+                        success: function(data){
+                            $('.bill_schedules_container').html(data);
+                            $('.preview').hide();
+                        }
+    				});
+    			}
+                else{
+                    $('.bill_schedules_container').html("");
+                    $('.preview').hide();
+                }
+    		});
+           
+    	});
+
+    </script>
+{% endblock additional_script %}

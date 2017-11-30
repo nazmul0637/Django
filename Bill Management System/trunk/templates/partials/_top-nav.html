@@ -1,0 +1,58 @@
+{% load static %}
+<nav role="navigation" class="navbar navbar-static-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button data-target="#bs-example-navbar-collapse-1" data-toggle="collapse" class="navbar-toggle" type="button">
+                    <span class="entypo-menu"></span>
+                </button>
+                <button class="navbar-toggle toggle-menu-mobile toggle-left" type="button">
+                    <span class="entypo-list-add"></span>
+                </button>
+
+                <div id="logo-mobile" class="visible-xs">
+                    <h1>
+                        BMS
+                    </h1>
+                </div>
+
+            </div>
+
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+
+
+                <ul style="margin-right:0;" class="nav navbar-nav navbar-right">
+                    <li>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <img alt="profile picture" class="admin-pic img-circle" src="{{ request.user.get_profile_image }}">Hi, {{ request.user.username }} <b class="caret"></b>
+                        </a>
+                        <ul style="margin-top:14px;" role="menu" class="dropdown-setting dropdown-menu">
+                            <li>
+                                <a href="{% url "Auth:user_profile" %}">
+                                    <span class="entypo-user"></span>&#160;&#160;My Profile</a>
+                            </li>
+                            <li>
+                                <a href="{% url CHANGE_PASSWORD_URL %}?next={{ request.path }}">
+                                    <span class="entypo-vcard"></span>&#160;&#160;Change Password</a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <span class="entypo-lifebuoy"></span>&#160;&#160;Help</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="{% url LOGOUT_URL %}">
+                                    <span class="entypo-logout"></span>&#160;&#160;Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>

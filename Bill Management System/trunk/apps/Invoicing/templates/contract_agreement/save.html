@@ -1,0 +1,410 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:contract_agreement_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="" class="form-horizontal bucket-form" onsubmit="return validate();">
+    	{% csrf_token %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <label>{{ contract_agreement_form.portfolio.label }}{% if contract_agreement_form.portfolio.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                        {{ contract_agreement_form.portfolio }}
+                        <div {% if contract_agreement_form.portfolio.errors %}class="error"{% endif %}>
+                            {% for error in contract_agreement_form.portfolio.errors %}
+                                {{ error|escape }} 
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label>{{ contract_agreement_form.product.label }}{% if contract_agreement_form.product.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                        {{ contract_agreement_form.product }}
+                        <div {% if contract_agreement_form.product.errors %}class="error"{% endif %}>
+                            {% for error in contract_agreement_form.product.errors %}
+                                {{ error|escape }} 
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label>{{ contract_agreement_form.client.label }}{% if contract_agreement_form.client.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                        {{ contract_agreement_form.client }}
+                        <div {% if contract_agreement_form.client.errors %}class="error"{% endif %}>
+                            {% for error in contract_agreement_form.client.errors %}
+                                {{ error|escape }} 
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <div class="col-sm-4 form_input_container">
+                        <label>{{ contract_agreement_form.agreement_date.label }}{% if contract_agreement_form.agreement_date.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                        {{ contract_agreement_form.agreement_date }}<i class="form-control-feedback glyphicon glyphicon-calendar" style="top: 25px;"></i>
+                        <div {% if contract_agreement_form.agreement_date.errors %}class="error"{% endif %}>
+                            {% for error in contract_agreement_form.agreement_date.errors %}
+                                {{ error|escape }} 
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-4 form_input_container">
+                        <label>{{ contract_agreement_form.net_amount.label }}{% if contract_agreement_form.net_amount.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                        {{ contract_agreement_form.net_amount }}
+                        <div {% if contract_agreement_form.net_amount.errors %}class="error"{% endif %}>
+                            {% for error in contract_agreement_form.net_amount.errors %}
+                                {{ error|escape }} 
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-4 form_input_container">
+                        <label>{{ contract_agreement_form.mode_of_payment.label }}{% if contract_agreement_form.mode_of_payment.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                        {{ contract_agreement_form.mode_of_payment }}
+                        <div {% if contract_agreement_form.mode_of_payment.errors %}class="error"{% endif %}>
+                            {% for error in contract_agreement_form.mode_of_payment.errors %}
+                                {{ error|escape }} 
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <label>{{ contract_agreement_form.invoice_template.label }}</label>
+                        {{ contract_agreement_form.invoice_template }}
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="checkbox" style="padding-top: 0px;">
+                         {{ contract_agreement_form.is_vat_included.label }}{{ contract_agreement_form.is_vat_included }}
+                         </label>
+                        <div class="form_input_container" id="vat" style="margin-top: -2px;">
+                            {{ contract_agreement_form.vat }}
+                        </div>
+                    </div>
+                    <div class="col-sm-4" id="bank_account">
+                        <label>{{ contract_agreement_form.bank_account.label }}</label>
+                        {{ contract_agreement_form.bank_account }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h6 align="center">Purposes</h6>
+        {{ contract_agreement_purpose_formset.management_form }}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="25%">Purpose Name*</th>
+                    <th width="15%">No. of Installment*</th>
+                    <th width="25%" class="balance">Amount Per Installment</th>
+                    <th width="25%" class="balance">Total Amount*</th>
+                    <th width="10%">Action</th>
+                </tr>
+            </thead>
+            <tbody id="table_body" class="purposes">
+                {% if contract_agreement_purpose_formset.non_form_errors %}
+                        {% for error in contract_agreement_purpose_formset.non_form_errors %}
+                            <p class="error" align="center" id="purpose_error">{{ error|escape }}</p>
+                        {% endfor %}
+                {% endif %}
+                <p class="error" align="center" id="purpose_error"></p>
+                {% for contract_agreement_purpose_form in contract_agreement_purpose_formset %}
+                    {{ contract_agreement_purpose_form.id }}   
+                    <tr class="contract_agreement_purpose_formset">
+
+                        {% for field in contract_agreement_purpose_form.visible_fields %}
+                            <td>
+                                {{ field }}
+                                <div {% if field.errors %}class="error"{% endif %}>
+                                    {% for error in field.errors %}
+                                        {{ error|escape }} 
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h6 align="center">Client Concern Persons</h6>
+        {{ contract_agreement_concern_person_formset.management_form }}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="50%">Concern Person*</th>
+                    <th width="40%">Type*</th>
+                    <th width="10%">Action</th>
+                </tr>
+            </thead>
+            <tbody id="table_body" class="concern_persons">
+                {% if contract_agreement_concern_person_formset.non_form_errors %}
+                        {% for error in contract_agreement_concern_person_formset.non_form_errors %}
+                            <p class="error" align="center" id="purpose_error">{{ error|escape }}</p>
+                        {% endfor %}
+                {% endif %}
+                <p class="error" align="center" id="purpose_error"></p>
+                {% for contract_agreement_concern_person_form in contract_agreement_concern_person_formset %}
+                    {{ contract_agreement_concern_person_form.id }}   
+                    <tr class="contract_agreement_concern_person_formset">
+                        {% for field in contract_agreement_concern_person_form.visible_fields %}
+                            <td>
+                                {{ field }}
+                                <div {% if field.errors %}class="error"{% endif %}>
+                                    {% for error in field.errors %}
+                                        {{ error|escape }} 
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-sm-3 col-sm-offset-3">
+                <input type="submit" class="btn btn-block btn-primary col-sm-6" value="Next">
+            </div>
+            <div class="col-sm-3">
+                <a href="{% url 'Invoicing:contract_agreement_index' %}" class="btn btn-block btn-danger col-sm-6">Cancel</a>
+            </div>
+        </div>
+        
+    </form>
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/jquery.formset.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('.contract_agreement_purpose_formset').formset({
+                prefix: '{{ contract_agreement_purpose_formset.prefix }}',
+                addText: '<span class="text-info">Add More</span>',
+                deleteText: 'Remove'
+            });
+
+            $('.contract_agreement_concern_person_formset').formset({
+                prefix: '{{ contract_agreement_concern_person_formset.prefix }}',
+                addText: '<span class="text-info">Add More</span>',
+                deleteText: 'Remove'
+            });
+
+            if($('#id_mode_of_payment').val() != 'Bank'){
+                $('#bank_account').hide();
+            }
+            $('#id_mode_of_payment').change(function(){
+                if($(this).val() == "Bank"){
+                    $('#bank_account').show();
+                    $('#id_bank_account').attr('required', true);
+                }
+                else{
+                    $('#bank_account').hide();
+                    $('#id_bank_account').attr('required', false);  
+                }
+            });
+
+            if($('#id_vat').prop('required') == false){
+                $('#vat').hide();
+            }
+            
+            $('#id_is_vat_included').change(function(){
+                if(this.checked){
+                    $('#vat').show();
+                    $("#id_vat").attr("required", true);
+                }
+                else{
+                    $('#vat').hide();
+                    $("#id_vat").attr("required", false);
+                }
+            });
+
+            $('#id_portfolio').change(function(){
+                var portfolio_id = $(this).val();
+                if(portfolio_id){
+                    $.ajax({
+                        url: "{% url "Portfolio:product_list" 0 %}".replace('0', portfolio_id),
+                        success: function(data){
+                            $('#id_product').find('option').not(':first').remove()
+                            $.each(data, function(index, text){
+                                $('#id_product').append($('<option></option>').val(index).html(text));
+                            });
+                        }
+                    });
+                }
+                else{
+                    $('#id_product').find('option').not(':first').remove()
+                    initialize('contract_agreement_purpose_formset')
+                }
+                return false;
+            });
+
+            $('.purposes').find('.add-row:first').click(function(){
+                var last_select = $('.contract_agreement_purpose_formset').find('select').last();
+                num_options = $(last_select).find('option').length;
+                var product_id = $('#id_product').val();
+                if(product_id && num_options<2){
+                    $.ajax({
+                        url: "{% url "Portfolio:purpose_list" 0 %}".replace('0', product_id),
+                        success: function(data){
+                            $.each(data, function(index, text){
+                                last_select.append($('<option></option>').val(index).html(text));
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('.concern_persons').find('.add-row:first').click(function(){
+                var last_tr = $('.concern_persons').find('tr');
+                var last_select = $(last_tr[last_tr.length-2]).find('select:first')
+                num_options = $(last_select).find('option').length;
+                var client_id = $('#id_client').val();
+                if(client_id && num_options<2){
+                    $.ajax({
+                        url: "{% url "Clients:concern_person_list" 0 %}".replace('0', client_id),
+                        success: function(data){
+                            $.each(data, function(index, text){
+                                last_select.append($('<option></option>').val(index).html(text));
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#id_product').change(function(){
+                var product_id = $(this).val();
+                if(product_id){
+                    $.ajax({
+                        url: "{% url "Portfolio:purpose_list" 0 %}".replace('0', product_id),
+                        success: function(data){
+                            $('.contract_agreement_purpose_formset').find('select').each(function(){
+                                var select = $(this);
+                                select.find('option').not(':first').remove();
+                                $.each(data, function(index, text){
+                                    $(select).append($('<option></option>').val(index).html(text));
+                                });
+                            });
+                        }
+                    });
+                }
+                else{
+                    initialize('contract_agreement_purpose_formset')
+                }
+                return false;
+            });
+
+            $('#id_client').change(function(){
+                var client_id = $(this).val();
+                if(client_id){
+                    $.ajax({
+                        url: "{% url "Clients:concern_person_list" 0 %}".replace('0', client_id),
+                        success: function(data){
+                            $('.contract_agreement_concern_person_formset').find("select[id$='concern_person']").each(function(){
+                                var select = $(this);
+                                select.find('option').not(':first').remove();
+                                $.each(data, function(index, text){
+                                    $(select).append($('<option></option>').val(index).html(text));
+                                });
+                            });
+                        }
+                    });
+                }
+                else{
+                    $('.contract_agreement_concern_person_formset').find("select[id$='concern_person']").each(function(){
+                        $(this).find('option').not(':first').remove();
+                    });
+                }
+                return false;
+            });
+
+
+        });
+
+        function initialize(param){
+            $('.'+param).find('select').each(function(){
+                $(this).find('option').not(':first').remove();
+            });
+        }
+
+        function validate(){
+            var purpose_trs =  $('.purposes').find('tr');
+            var purposes = [];
+            var flag = true;
+            purpose_trs.each(function(e){
+                if(e==purpose_trs.length-1)return;
+                if($(this).css('display')!='none'){
+                    purpose = $(this).find("select[id$='purpose']:first").val();
+                    if(purposes.indexOf(purpose)>-1){
+                        flag = false;return;
+                    }
+                    purposes.push(purpose);
+                }
+            });
+
+            if(flag == false){
+                $('#purpose_error').html('Same purpose has been included more than one time');
+                return false;
+            }
+
+            var net_amount = $('#id_net_amount').val();
+            var purpose_amounts = 0.0;
+            purpose_trs.each(function(e){
+                if(e==purpose_trs.length-1)return;
+                purpose_amounts+= ($(this).css('display')!='none')? parseFloat($(this).find("input[id$='amount']:first").val()):0.0;
+            });
+            console.log(purpose_amounts);
+            if(purpose_amounts>net_amount){
+                $('#purpose_error').html('Total amount for purposes exceeds by '+(purpose_amounts-net_amount)+' from net contract amount');
+                return false;
+            }
+
+            if(purpose_amounts<net_amount){
+                $('#purpose_error').html('Total amount for purposes is short by '+(net_amount-purpose_amounts)+' amount from net contract amount');
+                return false;
+            }
+
+            return true;
+        }
+
+        function hasCommon(arr1, arr2){
+            if(arr1==null || arr2==null)
+                return false;
+            var flag = false;
+            $(arr1).each(function(index,value){
+                if(arr2.indexOf(value)!=-1){
+                    flag = true;
+                    return;
+                }
+            });
+            return flag;
+        }
+
+        function changeTotal(param){
+            parent_tr = $(param).parents('tr');
+            amount_input = $(parent_tr).find("input[name$='amount']:first");
+            num_installment = parseFloat($(parent_tr).find("input[name$='num_installment']:first").val());
+            per_amount = parseFloat($(parent_tr).find("input[name$='amount_per_installment']:first").val());
+            if(!num_installment || !per_amount){
+                /*amount_input.attr('disabled', false);*/
+                return;
+            }
+            amount_input.val(per_amount*num_installment);
+            /*amount_input.attr('disabled', true);*/
+        }
+    </script>
+{% endblock additional_script %}

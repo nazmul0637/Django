@@ -1,0 +1,126 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Clients:client_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    
+    <div class="panel-body">
+        <form method="POST" action="" class="form-horizontal bucket-form">
+            {% csrf_token %}
+            {% for field in client_form.visible_fields %}
+                <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}
+                    {% if field.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                    <div class="col-sm-6 form_input_container">
+                        {% if field.field.widget.attrs.class == "checkbox_input" %}
+                            <div class=" checkbox">
+                                <label class="control-label">
+                                    {{ field }} {{ field.help_text }}
+                                </label>
+                            </div>
+                        {% elif field.field.widget.attrs.class == 'form-control datetime-input' %}
+                            {{ field }}<i class="form-control-feedback glyphicon glyphicon-calendar"></i>                        
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        <div {% if field.errors %}class="error"{% endif %}>
+                        {% for error in field.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            
+            {% endfor %}
+            <div align="center"><h5>Concern Persons</h5></div>
+            {{ concern_person_formset.management_form }}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="17%">Name*</th>
+                        <th width="17%">Designation*</th>
+                        <th width="17%">Division*</th>
+                        <th width="17%">Contact Number*</th>
+                        <th width="17%">Email</th>
+                        <th width="10%">Status</th>
+                        <th width="5%">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="table_body">
+                {% if concern_person_formset.non_form_errors %}
+                    <div class="non-field-errors" align="center">
+                        {% for error in concern_person_formset.non_form_errors %}
+                          <p class="error">{{ error|escape }}</p>
+                        {% endfor %}
+                      </div>
+                {% endif %}
+                {% for concern_person_form in concern_person_formset %}
+                    {{ concern_person_form.id }}
+                    <tr class="concern_person-formset">
+                        {% for field in concern_person_form.visible_fields %}
+                            <td>
+                                {% if field.field.widget.attrs.class == "checkbox_input" %}
+                                    <div class="checkbox">
+                                        <label class="control-label">
+                                            {{ field }}{{ field.help_text }}
+                                        </label>
+                                    </div>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                <div {% if field.errors %}class="error"{% endif %}>
+                                    {% for error in field.errors %}
+                                        {{ error|escape }} 
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        {% endfor %}
+                            
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+    
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-3">
+                    <input type="submit" class="btn btn-block btn-primary col-sm-6" value="Save">
+                </div>
+                <div class="col-sm-3">
+                    <a href="{% url 'Clients:client_index' %}" class="btn btn-block btn-danger col-sm-6">Cancel</a>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript" src="{% static '' %}js/jquery.formset.js"></script>
+    <script type="text/javascript">
+        $('.concern_person-formset').formset({
+            prefix: '{{ concern_person_formset.prefix }}',
+            addText: '<span class="text-info">Add More</span>',
+            deleteText: 'Remove'
+        });
+        
+    </script>
+{% endblock additional_script %}
+
+

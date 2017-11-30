@@ -1,0 +1,99 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+
+{% block additional_style %}
+<style type="text/css">
+    .popover{
+        background: black;
+    }
+
+    .popover.bottom .arrow:after {
+         border-right-color: black !important;
+    }
+
+    .popover-content{
+
+        color: white !important;
+    }
+</style>
+
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Settings:invoice_template_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %} 
+
+
+{% block content %}
+    <div class=" col-sm-12" style="padding-bottom: 10px">
+        <button class="btn btn-primary pull-right " data-toggle="popover" data-html="true" data-placement="bottom" data-content="<h6>You can use these Keywords to create Templates:</h6><hr>[CLIENT_NAME]<br>[CLIENT_ADDRESS]<br>[INVOICE_DATE]<br>[SUBJECT]<br>[AMOUNT_IN_WORD]<br>[ACCOUNT_NAME]<br>[ACCOUNT_NUMBER]<br>[BANK_NAME]<br>[BRANCH_NAME]<br>[BRANCH_ADRESS]<br>[SWIFT_CODE]<br>[ROUTING NUMBER]">HELP NOTE</button>
+    </div>
+    <div class="panel-body">
+        <form method="POST" action="" class="form-horizontal bucket-form">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="{{ field.id_for_label }}">{{ field.label }}
+                    {% if field.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                    <div class="col-sm-10 form_input_container">
+                        {% if field.field.widget.attrs.class == "checkbox_input" %}
+                            <div class=" checkbox">
+                                <label class="control-label">
+                                    {{ field }} Active
+                                </label>    
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        <div {% if field.errors %}class="error"{% endif %}>
+                        {% for error in field.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div> 
+            
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <input type="submit" class="btn btn-primary" value="Save">&nbsp;&nbsp;
+                    <a href="{% url 'Settings:invoice_template_index' %}" class="btn btn-danger">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block additional_script %}
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();   
+    });
+</script>
+    <script type="text/javascript" src="{% static '' %}ckeditor/ckeditor.js"></script>
+    <script type="text/javascript">
+        CKEDITOR.replace( 'template_body' );
+
+
+    </script>
+{% endblock additional_script %}
+
+
+
+

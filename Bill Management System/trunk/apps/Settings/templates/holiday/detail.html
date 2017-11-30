@@ -1,0 +1,39 @@
+
+<div class="modal-dialog" role="document" id="modal_detail">
+  <div class="modal-content">
+   <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <h4 class="modal-title" id="myModalLabel" align="center">Bank Account Details</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <label class="col-sm-3">Branch ID</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ holiday.branch_id }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Holiday Date</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ holiday.holiday_date }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Holiday Type</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ holiday.holiday_type }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Description</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ holiday.get_description }}</div>
+      </div>
+      
+      <div class="row">
+        <label class="col-sm-3">Entry on</label>
+        <div class="col-sm-6">: &nbsp; &nbsp;{{ holiday.created_at|timesince }}</div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3">Last Update</label>
+        <div class="col-sm-6">: &nbsp; &nbsp; {% if holiday.updated_at %}{{ holiday.updated_at|timesince }} ago{% endif %}</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button", class="btn btn-info", data-dismiss="modal">Bact to the List</button>  
+    </div>
+  </div>
+</div>

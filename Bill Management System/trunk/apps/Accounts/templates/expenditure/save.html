@@ -1,0 +1,110 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Accounts:expenditure_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <div class="panel panel-default">
+    	<div class="panel-body">
+    		<form accept="" method="POST">
+    			{% csrf_token %}
+	    		<div class="row">
+	    			<div class="col-sm-4">
+	    				<label class="control-label">{{ form.product.label }}</label>
+	    				<div class="form_input_container">{{ form.product }}</div>
+	    			</div>
+	    			<div class="col-sm-4 has-feedback">
+	    				<label class="control-label">{{ form.date.label }}</label>
+	    				<div class="form_input_container">{{ form.date }}<i class="form-control-feedback glyphicon glyphicon-calendar" style="right: 5px;"></i></div>
+	    			</div>
+	    			<div class="col-sm-4">
+	    				<label class="control-label">{{ form.exp_id.label }}</label>
+	    				<div class="form_input_container">{{ form.exp_id }}</div>
+	    			</div>
+	    		</div>
+	    		{{ form.seq_num }}
+	    		<br><br>
+	    		{{ formset.management_form }}
+	    		<table class="table table-bordered">
+	    			<thead>
+	    				<tr>
+	    					<td width="60%">Purpose</td>
+	    					<td width="30%">Amount</td>
+	    					<td width="10%">Action</td>
+	    				</tr>
+	    			</thead>
+	    			<tbody>
+	    				{% if formset.non_form_errors %}
+	                        {% for error in formset.non_form_errors %}
+	                            <p class="error" align="center" id="purpose_error">{{ error|escape }}</p>
+	                        {% endfor %}
+                		{% endif %}
+                		
+                		{% for form in formset %}
+                		{{ form.id }}
+	    				<tr>
+	    					{% for field in form.visible_fields %}
+                            <td>
+                                {{ field }}
+                                <div {% if field.errors %}class="error"{% endif %}>
+                                    {% for error in field.errors %}
+                                        {{ error|escape }} 
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        	{% endfor %}	
+	    				</tr>
+	    				{% endfor %}
+	    			</tbody>
+	    		</table>
+
+	    		<br>
+	    		<div class="row">
+	    			<label class="col-sm-1 control-label">{{ form.description.label }}:</label>
+	    			<div class="col-sm-6 form_input_container">{{ form.description }}</div>
+	    		</div>
+	    		<br><br>
+	    		<div class="row">
+		            <div class="col-sm-3 col-sm-offset-3">
+		                <input type="submit" class="btn btn-block btn-primary col-sm-6" value="Save">
+		            </div>
+		            <div class="col-sm-3">
+		                <a href="{% url 'Accounts:expenditure_index' %}" class="btn btn-block btn-danger col-sm-6">Cancel</a>
+		            </div>
+		        </div>
+    		</form>
+    	</div>
+    </div>
+{% endblock content %}
+
+{% block additional_script %}
+	<script type="text/javascript" src="{% static '' %}js/jquery.formset.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$('#id_date').on('dp.change', function(e){
+    			var date_array = $(this).val().split('-');
+    		 	$('#id_exp_id').val(date_array[0]+date_array[1]+$('#id_seq_num').val());
+    		});
+
+    		$('tbody tr').formset({
+                addText: '<span class="text-info">Add More</span>',
+                deleteText: 'Remove'
+            });
+    	});
+    </script>
+{% endblock additional_script %}

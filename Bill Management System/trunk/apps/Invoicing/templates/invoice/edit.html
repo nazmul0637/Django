@@ -1,0 +1,147 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:invoice_save" invoice.get_encoded_id %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+    	<div class="panel-body">
+    		<form method="POST" action="" id="invoice_form">
+    			{% csrf_token %}	
+	    		<input type="number" name="contract_agreement" value="{{ invoice.contract_agreement.id }}" hidden="hidden">
+                <input type="number" name="invoice_sequence" hidden="hidden" value="{{ invoice.invoice_sequence }}">
+                <div class="bill_schedules_container">
+                    <table class="table table-bordered">
+                        <caption><h6>Bill Schedules</h6></caption>
+                        <thead>
+                            <tr>
+                                <th width="5%" class="align-center"><input type="checkbox" id="id_check_all"></th>
+                                <th width="5%" class="align-center">SEL</th>
+                                <th width="50%">Purpose</th>
+                                <th width="20%" class="align-center">Schedule Date</th>
+                                <th width="20%" class="align-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bill_schedules">
+                            {% for bill_schedule in bill_schedules %}
+                                <tr>
+                                    <td class="align-center">
+                                    <input type="checkbox" name="bill_schedule", class="schedule_check_box" value="{{ bill_schedule.id }}" {% if bill_schedule.invoice %}checked{% endif %}>
+                                    <input type="text" class="subject_content" hidden="hidden" value="{{ bill_schedule.get_installment_num }} installment for {{ bill_schedule.contract_agreement_purpose }}">
+                                    </td>
+                                    <td class="align-center">{{ forloop.counter }}</td>
+                                    <td class="purpose">{{ bill_schedule.contract_agreement_purpose }}</td>
+                                    <td class="align-center">{{ bill_schedule.schedule_date }}</td>
+                                    <td class="align-right">{{ bill_schedule.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p class="error" align="center" id="bill_schedule_error"></p>
+                    <div class="form-group">
+                        <label for="subject">Subject of Invoice:</label>
+                        <div class="form_input_container">
+                            <input type="text" name="subject" id="id_subject" value="{{ invoice.subject }}">
+                            <p class="error" id="subject_error"></p>
+                        </div>
+                        <label for="invoice_date">Invoice Date:</label>
+                        <div class="form_input_container">
+                            <input type="text" name="invoice_date" value="{{ invoice.get_date }}" class="datetime-input" id="id_invoice_date" style="width: 20%;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <a href="javascript:showPreview()" class="btn btn-primary btn-success pull-right" id="id_preview">Preview</a>
+                    </div>
+                </div>
+                <br><br>
+                
+                <div class="preview" style="display: none;">
+                    <div class="panel panel-default">
+                        <div class="panel-body preview_body">
+                            
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <input type="submit" class="btn btn-success" name="" value="Save Invoice">
+                        <a href="{% url "Invoicing:invoice_index" %}" class="btn btn-danger">Cancel</a>
+                    </div>
+                </div>
+            </form>
+    	</div>
+    </div>
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$('#id_check_all').click(function(){
+                $(".schedule_check_box").prop('checked', $(this).prop('checked'));
+            });
+
+            $('input[type=checkbox]').change(function(){
+                $('#id_subject').val("");
+                $('.preview').hide();
+            });
+
+            $('#id_subject').click(function(){
+                if($('#id_subject').val()==""){
+                    subject_text = ""
+                    $('.schedule_check_box').each(function(){
+                        if(this.checked){
+                            subject_text+=$(this).next('input').val()+","
+                        }
+                    });
+                    if(subject_text!=""){
+                        $(this).val("Invoice Against "+ subject_text.slice(0,-1));
+                    }
+                }
+            });
+    	});
+
+        function showPreview(){
+            if($('.schedule_check_box:checked').length==0){
+                $('#bill_schedule_error').html("No bill schedule has been selected for invoice");
+                return;
+            }
+            else $('#bill_schedule_error').html("");
+
+            if($('#id_subject').val()==""){
+                $('#subject_error').html("Subject can not be empty");
+                return;
+            }
+            else $('#subject_error').html("");
+
+            if($('#id_invoice_date').val()==""){
+                $('#invoice_date_error').html("Enter invoice date");
+                return;
+            }
+            else $('#invoice_date_error').html("");
+
+            $.ajax({
+                type: 'POST',
+                url:"{% url "Invoicing:get_preview" %}",
+                data: $('#invoice_form').serialize(),
+                success: function(data){
+                    $('.preview_body').html(data);
+                    $('.preview').show();
+                }
+            });
+        }
+
+    </script>
+{% endblock additional_script %}

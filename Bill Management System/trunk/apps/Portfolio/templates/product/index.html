@@ -1,0 +1,178 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| {{ title }} List
+{% endblock %}
+
+{% block additional_style %}
+	<link rel="stylesheet" href="{% static '' %}js/dataTable/css/jquery.dataTables.min.css" />
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Portfolio:product_index" %}">{{ title }} List</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }} List
+{% endblock %}
+
+{% block button_container %}
+    <a href="{% url "Portfolio:product_save" %}" class="btn btn-primary pull-right">Add {{ title }}</a>
+{% endblock button_container %}
+
+
+{% block content %}
+	
+	<table class="table table-bordered" id="data-table-example" cellspacing="0" width="100%">
+		<tfoot>
+			<tr>
+                <th></th>
+				<th>Product Name</th>
+                <th>Portfolio</th>
+                <th>Type</th>
+				<th>Concern Persons</th>
+				<th>Duration</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</tfoot>
+		<thead>
+			<tr>
+                <th class="align-center">SL</th>
+				<th width="20%">Product Name</th>
+                <th width="20%">Portfolio</th>
+                <th width="10%" class="align-center">Type</th>
+                <th width="20%">Concern Persons</th>
+				<th width="10%">Duration</th>
+				<th width="10%">Status</th>
+				<th width="10%" class="align-center">Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in products %}
+				<tr>
+                    <td class="align-center">{{ forloop.counter }}</td>
+					<td>{{ product }}</td>
+                    <td>{{ product.portfolio.name }}</td>
+					<td class="align-center">{{ product.product_type }}</td>
+					<td>{{ product.get_concern_persons|linebreaks }}</td>
+					<td>{% if product.status %}
+					   		 Continued....
+					   	{% else %}
+					   	    {{ product.start_date|timesince:product.end_date }}
+						{% endif %}
+					</td>
+					<td><span class="label label-{% if product.status %}success {% else %} default{% endif %}">{{ product.get_status }}</span></td>
+					<td class="align-center">
+						<a href="" onclick="showDetail({{ product.id }}); return false;"><span class="glyphicon glyphicon-search text-success"></span></a>| 
+						<a href="{% url "Portfolio:product_save" product.get_encoded_id %}"><span class="glyphicon glyphicon-edit text-info"></span></a>| 
+						<a href="{% url "Portfolio:product_delete" product.get_encoded_id %}" onclick="return confirm('Are you sure to delete this data?');"><span class="glyphicon glyphicon-remove text-warning"></span></a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>	
+	</table>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="detailModal"></div>
+	
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript">
+    	function showDetail(id){
+    		var modal = $('#detailModal');
+    		$.ajax({
+    			url: "{% url "Portfolio:product_detail" 0 %}".replace('0', id),
+    			success: function(response){
+    				modal.html(response);
+    				modal.modal();
+    			},
+    			error: function(){
+					console.log("problem loading modal data");
+				}
+    		});
+    	}
+    </script>
+
+
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{% static '' %}js/dataTable/js/dataTables.material.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            search_columns = [1,2,4,5];
+            select_columns = [3,6];
+            select_options = [['Product', 'Project'], ['Active', 'Closed']];
+            var table = $('#data-table-example').DataTable({
+               /* serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{% url "Portfolio:product_index" %}",
+                    type: 'POST'  
+                },
+*/
+                "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+                "dom": '<"top"l>rt<"bottom"<"pull-left"i><"pull-right"p>>',
+                "searching": true,
+                "columnDefs": [
+                    {
+                        "targets": [0,7],
+                        "sortable": false,
+                    }],
+                initComplete: function (){
+                    initSelectBox(this, select_columns, select_options);    
+                }
+            });
+            initSearchBox(table, search_columns);
+
+        });
+
+        function initSearchBox(table, search_columns){
+            var tfoot_ths = $('table tfoot th');
+            search_columns.forEach(function(i){
+                var tfoot_th = tfoot_ths[i];
+                var title = $.trim($(tfoot_th).text());
+                $(tfoot_th).html( '<input type="text" class="filter"/>' );
+            });
+
+            table.columns(search_columns).every( function () {
+                var that = this;
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                });
+            });
+        }
+
+        function initSelectBox(table, select_columns, select_options){
+            var i=0;
+            table.api().columns(select_columns).every( function () {
+                var column = this;
+                var select = $('<select><option value="">All</option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? val : '', true, false )
+                            .draw();
+                    } );
+                for(var j=0; j<select_options[i].length; j++){
+                    select.append('<option value='+select_options[i][j]+'>'+select_options[i][j]+'</option>');
+                }
+                i++;
+            });
+        }
+
+  </script>
+{% endblock additional_script %}
+

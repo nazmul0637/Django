@@ -1,0 +1,114 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Invoicing:bill_schedule_save" contract_agreement.get_encoded_id %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+	<form action="" method="POST">
+		{% csrf_token %}
+		{% for formset_dic in formsets %}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-sm-4">
+						<strong>Purpose Name: </strong> {{ formset_dic.contract_agreement_purpose }}
+					</div>
+					<div class="col-sm-4">
+						<strong>Contract Amount: </strong>{{ formset_dic.contract_agreement_purpose.amount }}
+					</div>
+					<div class="col-sm-4">
+						<strong>No. of installment: </strong>{{ formset_dic.contract_agreement_purpose.num_installment }}
+					</div>
+				</div>
+				<br>
+				{{ formset_dic.formset.management_form }}
+				<table class="table">
+					<tr>
+						<td>#</td>
+						<td>Particular</td>
+						<td>Schedule Date</td>
+						<td>Amount</td>
+					</tr>	
+					{% for form in formset_dic.formset %}
+					{{ form.id }}
+					<tr>
+						<td>{{ forloop.counter }}</td>	
+						{% for field in form.visible_fields %}
+						<td>{{ field }}</td>
+						{% endfor %}
+					</tr>
+					{% endfor %}
+				</table>
+			{% if formset_dic.formset.non_form_errors %}
+                {% for error in formset_dic.formset.non_form_errors %}
+                    <p class="error" align="center" id="purpose_error">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
+			</div>
+		</div>
+		{% endfor %}
+
+		{% for form_dic in bill_installment_config_forms %}
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-sm-4">
+							<strong>Purpose Name: </strong>{{ form_dic.contract_agreement_purpose }}
+						</div>
+						<div class="col-sm-4">
+							<strong>Contract Amount: </strong>{{ form_dic.contract_agreement_purpose.amount }}
+						</div>
+						<div class="col-sm-4">
+							<strong>No. of installment: </strong>{{ form_dic.contract_agreement_purpose.num_installment }}
+						</div>
+					</div>
+					<br>
+					<div class="row">
+						{% for field in form_dic.form.visible_fields %}
+							{% if field.field.widget.attrs.class != 'checkbox_input' %}    
+							<div class="col-sm-4">
+								<label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+								<div class="form_input_container">{{ field }}</div>
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<div class="row">
+						<div class="checkbox" style="margin-left: 15px;">
+	                        <label class="control-label">
+	                            {{ form_dic.form.use_sequence }}
+	                            {{ form_dic.form.use_sequence.label }}
+	                        </label>
+	                    </div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+		<div class="row">
+            <div class="col-sm-3 col-sm-offset-3">
+                <input type="submit" class="btn btn-block btn-primary col-sm-6" value="Save">
+            </div>
+            <div class="col-sm-3">
+                <a href="{% url 'Invoicing:contract_agreement_index' %}" class="btn btn-block btn-danger col-sm-6">Cancel</a>
+            </div>
+        </div>
+	</form>
+
+    
+{% endblock content %}

@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| {{ title }} List
+{% endblock %}
+
+{% block additional_style %}
+	
+{% endblock additional_style %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Portfolio:purpose_index" %}">{{ title }} List</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }} List
+{% endblock %}
+
+{% block button_container %}
+    <a href="" class="btn btn-primary pull-right" onclick="save(null); return false;">Add {{ title }}</a>
+{% endblock button_container %}
+
+{% block content %}
+	<table class="table table-bordered" cellspacing="0" width="100%">
+		<thead>
+			<tr>
+				<th class="align-center" width="5%">SL</th>
+				<th>Purpose Name</th>
+				<th class="align-center">Status</th>
+				<th class="align-center">Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for purpose in purposes %}
+				<tr>
+					<td class="align-center">{{ forloop.counter }}</td>
+					<td>{{ purpose.name }}</td>
+					<td class="align-center"><span class="label label-{% if purpose.status %}success {% else %} default{% endif %}">{{ purpose.get_status }}</span></td>
+					<td class="align-center"><a href="" onclick="save({{ purpose.id }});return false;"><span class="glyphicon glyphicon-edit text-info"></span></a>| 
+					<a href="{% url "Portfolio:purpose_delete" purpose.get_encoded_id %}" onclick="return confirm('Are you sure to delete this data?');"><span class="glyphicon glyphicon-remove text-warning"></span></a></td>
+				</tr>
+			{% endfor %}
+		</tbody>	
+	</table>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="saveModal"></div>
+	
+{% endblock content %}
+
+
+{% block additional_script %}
+    <script type="text/javascript">
+
+    	function save(id){
+			var modal = $('#saveModal');
+			var url = (id==null)? "{% url "Portfolio:purpose_save"%}" : "{% url "Portfolio:purpose_save" 0 %}".replace('0', id);
+
+			$.ajax({
+				url: url,
+				success: function(response){
+					modal.html(response);
+					$('#saveModal').modal();
+					$('#saveFrm').submit(function(e){
+				        e.preventDefault();
+				  		store($(this), url);
+				  	});
+				},
+				error: function(){
+					console.log("problem loading modal data");
+				}
+			});
+    	}
+
+    	function store(form, url){
+    		$.ajax({
+    			method: 'POST',
+    			url: url,
+    			data: form.serialize(),
+    			success: function(msg){
+    				console.log(msg);
+    				location.reload();
+    			},
+    			error: function(){
+    				console.log("problem creating data");
+    			}
+    		});
+    	}
+
+    </script>
+{% endblock additional_script %}

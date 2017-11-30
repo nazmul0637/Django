@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Settings:holiday_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    
+    <div class="panel-body">
+        <form method="POST" action="" class="form-horizontal bucket-form">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                
+                <div class="form-group has-feedback">
+                    <label class="col-sm-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}
+                    {% if field.field.required %}<span class="required_field_indicator">*</span>{% endif %}</label>
+                    <div class="col-sm-6 form_input_container">
+                        {% if field.field.widget.attrs.class == "checkbox_input" %}
+                            <div class=" checkbox">
+                                <label class="control-label">
+                                    {{ field }} Active
+                                </label>
+                            </div>
+                        {% elif field.field.widget.attrs.class == 'form-control datetime-input' %}
+                            {{ field }}<i class="form-control-feedback glyphicon glyphicon-calendar"></i>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        <div {% if field.errors %}class="error"{% endif %}>
+                        {% for error in field.errors %}
+                            {{ error|escape }} 
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div> 
+            
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-4">
+                    <input type="submit" class="btn btn-primary" value="Save">&nbsp;&nbsp;
+                    <a href="{% url 'Settings:holiday_index' %}" class="btn btn-danger">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
+
+
+
+

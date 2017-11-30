@@ -1,0 +1,240 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block head_title %}
+| Dashboard
+{% endblock %}
+
+{% block additional_style %}
+{% endblock additional_style %}
+	
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+	<div class="row"> 
+
+    <div class="four-grids">
+                    <div class="col-md-3 four-grid">
+                        <div class="four-agileits">
+                            <div class="icon">
+                                <i class="glyphicon glyphicon-folder-open" aria-hidden="true"></i>
+                            </div>
+                            <div class="four-text">
+                                <h3>Projects</h3>
+                                <h4> {{product_count}}  </h4>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-3 four-grid">
+                        <div class="four-agileinfo">
+                            <div class="icon">
+                                <i class="glyphicon glyphicon-user" aria-hidden="true"></i>
+                            </div>
+                            <div class="four-text">
+                                <h3>Clients</h3>
+                                <h4>{{client_count}}</h4>
+
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-3 four-grid">
+                        <div class="four-w3ls">
+                            <div class="icon">
+                                <i class="glyphicon glyphicon-briefcase" aria-hidden="true"></i>
+                            </div>
+                            <div class="four-text">
+                                <h3>Contracts</h3>
+                                <h4>{{contract_count}}</h4>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col-md-3 four-grid">
+                        <div class="four-wthree">
+                            <div class="icon">
+                                <i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>
+                            </div>
+                            <div class="four-text">
+                                <h3>Receivable</h3>
+                                <h4>{{receivable_amount}}</h4>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+        <div class="work-progres col-md-6">
+                            <div class="chit-chat-heading">
+                                  <h6>WARNING FOR BILL</h6>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                  <thead>
+                                    <tr>
+                                      <th>#</th>
+                                      <th>Project</th>
+                                      <th>Client</th>                                   
+                                      <th>Amount</th>
+                                      <th>Date</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                              {% for schedule in schedules %}
+                                <tr>
+                                  <td>{{ forloop.counter }}</td>
+                                  <td>{{schedule.contract_agreement_purpose.contract_agreement.product.get_short_name}}</td>
+                                  <td>{{schedule.contract_agreement_purpose.contract_agreement.client.get_short_name}}</td>
+                                  <td>{{schedule.amount}}</td>                                 
+                                                             
+                                  <td>{{schedule.schedule_date}}</td>
+                              </tr>
+                              {% endfor %}
+                              
+                          </tbody>
+                      </table>
+                  </div>
+             </div>
+             <div class="col-md-6">
+                           <div class="chit-chat-heading">
+                                  <h6>INVOICE PROGRESS LIST</h6>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                  <thead>
+                                    <tr>
+                                      <th>#</th>
+                                      <th>Invoice</th>
+                                      <th>Client</th>                                  
+                                      <th>Amount</th>
+                                      <th>Status</th> 
+                                  </tr>
+                              </thead>
+                              <tbody>
+                              {% for invoice in invoices %}
+                                <tr>
+                                  <td>{{ forloop.counter }}</td>
+                                  <td>{{invoice.get_invoice_no}}</td>
+                                  <td>{{invoice.contract_agreement.client.get_short_name}}</td>
+                                  <td>{{invoice.amount}}</td>                                 
+                                                             
+                                  <td><span class="label label-danger">{{invoice.get_status}}</span></td>
+                                  <!-- <td><span class="badge badge-info">50%</span></td> -->
+                              </tr>
+                              {% endfor %}
+                              
+                          </tbody>
+                      </table>
+                  </div>  
+
+             </div>
+             
+    </div>
+    <div class="row">
+        
+        <div class="charts">
+                    <div class="col-md-4 w3layouts-char">
+                        <div class="charts-grids widget">
+                            <h4 class="title">Bar Chart Example</h4>
+                            <canvas id="bar" width="328" height="377" style="width: 328px; height: 377px;"> </canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4 w3-char">
+                        <div class="charts-grids widget states-mdl">
+                            <h4 class="title">Line Chart Example</h4>
+                            <canvas id="line" width="313" height="381" style="width: 313px; height: 381px;"> </canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4 w3l-char">
+                        <div class="charts-grids widget">
+                            <h4 class="title">Pie Chart Example</h4>
+                            <canvas id="pie" width="328" height="377" style="width: 328px; height: 377px;"> </canvas>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                             
+                            
+                </div>
+
+
+    </div>
+{% endblock content %}
+{% block additional_script %}
+    <script>
+                                var barChartData = {
+                                    labels : ["Jan","Feb","March","April","May","June","July"],
+                                    datasets : [
+                                        {
+                                            fillColor : "rgb(199, 54, 39)",
+                                            strokeColor : "rgba(233, 78, 2, 0.9)",
+                                            highlightFill: "#e74c3c",
+                                            highlightStroke: "#e74c3c",
+                                            data : [65,59,90,81,56,55,40]
+                                        },
+                                        {
+                                            fillColor : "rgb(23, 136, 210)",
+                                            strokeColor : "rgba(79, 82, 186, 0.9)",
+                                            highlightFill: "#1b93e1",
+                                            highlightStroke: "#1b93e1",
+                                            data : [40,70,55,20,45,70,60]
+                                        }
+                                    ]
+                                    
+                                };
+                                var lineChartData = {
+                                    labels : ["Jan","Feb","March","April","May","June","July"],
+                                    datasets : [
+                                        {
+                                            fillColor : "rgb(199, 54, 39)",
+                                            strokeColor : "#F2B33F",
+                                            pointColor : "rgba(242, 179, 63, 1)",
+                                            pointStrokeColor : "#fff",
+                                            data : [70,60,72,61,75,59,80]
+
+                                        },
+                                        {
+                                            fillColor : "rgb(23, 136, 210)",
+                                            strokeColor : "#6164C1",
+                                            pointColor : "rgba(97, 100, 193,1)",
+                                            pointStrokeColor : "#9358ac",
+                                            data : [50,65,51,67,52,64,50]
+
+                                        }
+                                    ]
+                                    
+                                };
+                                var pieData = [
+                                        {
+                                            value: 90,
+                                            color:"rgb(23, 136, 210)",
+                                            label: "Product 1"
+                                        },
+                                        {
+                                            value : 50,
+                                            color : "rgb(199, 54, 39)",
+                                            label: "Product 2"
+                                        },
+                                        {
+                                            value : 60,
+                                            color : "rgb(155, 197, 13)",
+                                            label: "Product 3"
+                                        },
+                                        {
+                                            value : 40,
+                                            color : "rgb(135, 66, 165)",
+                                            label: "Product 4"
+                                        }
+                                        
+                                    ];
+                                
+                            new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData);
+                            new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
+                            new Chart(document.getElementById("pie").getContext("2d")).Pie(pieData);
+                            
+                            </script>
+{% endblock additional_script %}

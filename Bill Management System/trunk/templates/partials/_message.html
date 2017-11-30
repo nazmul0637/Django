@@ -1,0 +1,20 @@
+{% if messages %}
+    
+    <ul class="list-group">
+    	{% for message in messages %}
+    		{% if message.level_tag == "success" %}
+	    		<div class="alert alert-success" role="alert">
+	    			<button data-dismiss="alert" class="close" type="button">×</button>
+	    			<span class="entypo-thumbs-up msg"> {{message.message}}</span>
+				</div>
+				{% elif message.level_tag == "error" %}
+				    <div class="alert alert-danger" role="alert">
+		    			<button data-dismiss="alert" class="close" type="button">×</button>
+		    			<span class="entypo-attention msg"> {{message.message}}</span>
+					</div>    
+    		{% endif %}
+    		
+    	{% endfor %}
+    </ul>
+
+{% endif %}

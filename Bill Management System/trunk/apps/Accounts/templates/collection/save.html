@@ -1,0 +1,74 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block head_title %}
+| {{ title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="fa fa-lg fa-angle-right"></i>
+    </li>
+    <li>
+        <a href="{% url "Accounts:collection_save" %}">{{ title }}</a>
+    </li>
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+    
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <label for="invoice">{{ form.invoice.label }}</label>
+                    <div class="form_input_container">{{ form.invoice }}</div>
+                </div>
+                <div class="col-sm-3 has-feedback">
+                    <label for="collection_date">{{ form.collection_date.label }}</label>
+                    <div class="form_input_container">{{ form.collection_date }}<i class="form-control-feedback glyphicon glyphicon-calendar" style="right: 5px;"></i></div>
+                </div>
+            </div>
+            
+            <br>
+            <div class="collection_details">
+                
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <label for="invoice">{{ form.description.label }}</label>
+                    <div class="form_input_container">{{ form.description }}</div>
+                </div>
+            </div>
+
+            <br>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Save" disabled="disabled">&nbsp;&nbsp;
+                <a href="" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+
+{% endblock content %}
+
+{% block additional_script %}
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('#id_invoice').change(function(){
+                var invoice_id = $(this).val();
+                if(invoice_id==""){ $('.collection_details').html(""); $('input[type="submit"]').prop('disabled', true); return;}
+                $.ajax({
+                    url: "{% url "Accounts:get_collection_details" 0 %}".replace('0', $(this).val()),
+                    success:function(data){
+                        $('.collection_details').html(data);
+                        $('input[type="submit"]').prop('disabled', false);
+                    }
+                });
+            });
+        });
+
+  </script>
+    
+{% endblock additional_script %}
